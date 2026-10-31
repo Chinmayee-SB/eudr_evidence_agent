@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+.pytest_cache/
+runs/
+data/corpus/raw/
+data/index/
+*.egg-info/
+# real estate names must stay out of the repo
+eudr_private/
+Coffee_Estate_Workspace/
+*.kml
+# uploaded documents stay on this machine
+data/plots/documents/uploads/
