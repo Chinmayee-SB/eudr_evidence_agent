@@ -1,0 +1,26 @@
+{
+ "_note": "MOCKED sample estate details, written by the team for testing. Not real grower data.",
+ "C-01": {
+  "declared_crop": "coffee",
+  "crop_since": 2005,
+  "documents": [
+   "documents/C-01_land_record.md"
+  ]
+ },
+ "C-02": {
+  "declared_crop": "coffee",
+  "crop_since": 2010,
+  "documents": []
+ },
+ "K-01": {
+  "declared_crop": "coffee",
+  "crop_since": 1998,
+  "documents": [
+   "documents/K-01_land_record.md"
+  ]
+ },
+ "N-01": {
+  "declared_crop": "coffee",
+  "documents": []
+ }
+}
