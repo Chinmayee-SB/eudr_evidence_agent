@@ -1,0 +1,24 @@
+{
+ "tool": "protected_area_check",
+ "dataset": "WCMC/WDPA/current/polygons",
+ "values": {
+  "inside_protected_area": true,
+  "in_force": [
+   {
+    "name": "Hatgat Reserve Forest",
+    "designation": "Reserve Forest",
+    "status": "Designated",
+    "overlap_ha": 47.96
+   }
+  ],
+  "proposed": [
+   {
+    "name": "Western Ghats Eco-sensitive Area",
+    "designation": "Eco Sensitive Area",
+    "status": "Proposed",
+    "overlap_ha": 47.96
+   }
+  ]
+ },
+ "note": "Some boundaries are coarse. Proposed areas are listed but are not legally in effect."
+}

@@ -1,0 +1,17 @@
+{
+ "tool": "protected_area_check",
+ "dataset": "WCMC/WDPA/current/polygons",
+ "values": {
+  "inside_protected_area": false,
+  "in_force": [],
+  "proposed": [
+   {
+    "name": "Western Ghats Eco-sensitive Area",
+    "designation": "Eco Sensitive Area",
+    "status": "Proposed",
+    "overlap_ha": 7.13
+   }
+  ]
+ },
+ "note": "Some boundaries are coarse. Proposed areas are listed but are not legally in effect."
+}
