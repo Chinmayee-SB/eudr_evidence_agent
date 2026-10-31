@@ -1,0 +1,14 @@
+{"id": "q01", "question": "Is shade-grown coffee under trees counted as forest?", "expected": ["EUDR Art. 2(6)", "EUDR Art. 2(4)"]}
+{"id": "q02", "question": "What is the legal definition of forest?", "expected": ["EUDR Art. 2(4)"]}
+{"id": "q03", "question": "What does deforestation mean in this regulation?", "expected": ["EUDR Art. 2(3)"]}
+{"id": "q04", "question": "What is the cut-off date for deforestation-free products?", "expected": ["EUDR Art. 2(13)", "EUDR Recital 46"]}
+{"id": "q05", "question": "What is forest degradation?", "expected": ["EUDR Art. 2(7)"]}
+{"id": "q06", "question": "When is a polygon needed for the geolocation of a plot?", "expected": ["EUDR Art. 2(28)"]}
+{"id": "q07", "question": "From what date does the EUDR apply?", "expected": ["EUDR Art. 38(2)"]}
+{"id": "q08", "question": "When does the regulation apply to micro and small undertakings?", "expected": ["EUDR Art. 38(3)"]}
+{"id": "q09", "question": "What information and geolocation must operators collect?", "expected": ["EUDR Art. 9(1)"]}
+{"id": "q10", "question": "Can competent authorities use satellite imagery in their checks?", "expected": ["EUDR Art. 18(2)", "EUDR Recital 49"]}
+{"id": "q11", "question": "Is coffee one of the relevant commodities?", "expected": ["EUDR Art. 2(1)"]}
+{"id": "q12", "question": "Does tree loss in the Hansen dataset prove deforestation?", "expected": ["Note: Hansen Global Forest Change loss is not deforestation"]}
+{"id": "q13", "question": "What is the speed limit for trucks in Bangalore?", "expected": [], "out_of_scope": true}
+{"id": "q14", "question": "How do I bake sourdough bread at home?", "expected": [], "out_of_scope": true}
