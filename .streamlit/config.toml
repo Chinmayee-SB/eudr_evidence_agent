@@ -1,0 +1,16 @@
+[theme]
+base = "dark"
+primaryColor = "#A9CF7C"
+backgroundColor = "#060906"
+secondaryBackgroundColor = "#111A13"
+textColor = "#EDF5E8"
+
+[server]
+address = "localhost"  # plot coordinates stay on this machine
+maxUploadSize = 5      # MB; matches documents.MAX_BYTES
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
