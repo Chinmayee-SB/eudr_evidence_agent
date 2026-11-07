@@ -15,7 +15,7 @@ from typing import Any
 
 import streamlit as st
 
-from eudr_agent import documents, report
+from eudr_agent import documents, guardrail, report
 from eudr_agent.config import settings
 from eudr_agent.geo import agent as geo_agent
 from eudr_agent.geo import tools as geo_tools
@@ -150,7 +150,11 @@ def render_header() -> None:
 def render_pipeline(plot: PlotInput, case: dict[str, Any]) -> None:
     geo, rules = case["geo"], case["rules"]
     geo_ok = bool(geo) and not geo.get("error")
+    check = case["guardrail"]
+    input_status = "Passed" if check["passed"] and not check["warnings"] else \
+        f"Passed, {len(check['warnings'])} warning(s)" if check["passed"] else "Blocked"
     stages = [
+        ("Input check", input_status, "done" if check["passed"] else "ready"),
         ("Documents", f"{len(plot.get('documents', []))} on case", "done" if plot.get("documents") else "ready"),
         ("Geo-analyst", "Evidence gathered" if geo_ok else "Failed" if geo else "Ready to run", "done" if geo_ok else "ready"),
         ("Supervisor", "Not built yet", "todo"),
@@ -197,6 +201,19 @@ def render_facts(plot: PlotInput) -> None:
     <div><small>Geometry check</small>{e(geometry)}</div></div>""")
 
 
+def render_input_check(case: dict[str, Any]) -> None:
+    """What the input guardrail found. A blocked plot cannot be sent to any agent."""
+    check = case["guardrail"]
+    if not check["passed"]:
+        items = "".join(f"<li>{e(reason)}</li>" for reason in check["blocked"])
+        html(f'<div class="notice"><b>Input check: blocked.</b> No agent will run on this plot.<ul>{items}</ul></div>')
+    for line in check["dropped"]:
+        html(f'<div class="notice"><b>Document held back from the agent.</b> {e(line)}</div>')
+    if check["warnings"]:
+        items = "".join(f"<li>{e(warning)}</li>" for warning in check["warnings"])
+        html(f'<p class="eyebrow" style="margin-top:12px">Input warnings</p><ul class="prose-list">{items}</ul>')
+
+
 # ---------- documents ----------
 
 def render_documents(plot: PlotInput, case: dict[str, Any]) -> None:
@@ -240,6 +257,8 @@ def describe_step(event: dict[str, Any]) -> tuple[str, str, str, str]:
     """A trace event as (row style, title, detail, tag)."""
     node, ms = event["node"], event.get("ms", 0)
     time_tag = f"{ms / 1000:.1f} s" if ms >= 1000 else f"{ms:.0f} ms"
+    if node == "input_guardrail":
+        return "", "Input check", event.get("summary", ""), time_tag
     if node == "geo_think":
         chose = [report.TOOL_LABELS.get(name, name) for name in event.get("chose", [])]
         return "", "Planning", f"Next: {', '.join(chose)}" if chose else "Has enough evidence and stops checking", time_tag
@@ -351,8 +370,14 @@ def render_evidence(geo: dict[str, Any]) -> None:
 def run_geo(plot: PlotInput, case: dict[str, Any], slot: Any) -> None:
     tracer = live_tracer("geo_analyst", slot)
     names = [Path(p).name for p in plot.get("documents", [])]
+    check = guardrail.check_input(plot, tracer=tracer)  # checked again at run time, so it is in the trace
+    if not check["passed"]:
+        case["geo"] = {"error": "input check blocked the plot: " + "; ".join(check["blocked"]), "events": tracer.events,
+                       "trace": tracer.path.name, "documents": names, "findings": []}
+        return
+    names = [Path(p).name for p in check["plot"].get("documents", [])]
     try:
-        final = geo_agent.analyse(plot, tracer=tracer)
+        final = geo_agent.analyse(check["plot"], tracer=tracer)
         case["geo"] = {"findings": final["findings"], "summary": final["summary"], "conflicts": final["conflicts"],
                        "open_questions": final["open_questions"], "hit_limit": final.get("hit_limit", False),
                        "events": tracer.events, "trace": tracer.path.name, "documents": names}
@@ -363,8 +388,8 @@ def run_geo(plot: PlotInput, case: dict[str, Any], slot: Any) -> None:
 
 def render_investigate(plot: PlotInput, case: dict[str, Any]) -> None:
     plot_id = plot["plot_id"]
-    clicked = st.button(f"Run geo-analyst on {plot_id}", type="primary", disabled=not settings.llm_enabled,
-                        key=f"run_{plot_id}")
+    clicked = st.button(f"Run geo-analyst on {plot_id}", type="primary", key=f"run_{plot_id}",
+                        disabled=not settings.llm_enabled or not case["guardrail"]["passed"])
     html('<p class="eyebrow" style="margin-top:14px">What the agent did, step by step</p>')
     slot = st.empty()
     if clicked:
@@ -382,7 +407,7 @@ def render_investigate(plot: PlotInput, case: dict[str, Any]) -> None:
     if geo.get("error"):
         st.error(f"The geo-analyst run failed: {geo['error']}")
         return
-    if sorted(geo["documents"]) != sorted(Path(p).name for p in plot.get("documents", [])):
+    if sorted(geo["documents"]) != sorted(Path(p).name for p in case["guardrail"]["plot"].get("documents", [])):
         html('<div class="notice">The documents changed after this run. Run the agent again so it can see them.</div>')
     if geo.get("hit_limit"):
         html('<div class="notice">The agent reached its step limit and reported with what it had.</div>')
@@ -468,6 +493,7 @@ def main() -> None:
     plot_id = st.radio("Plot", list(plots), horizontal=True, key="plot_id", label_visibility="collapsed")
     case = get_case(plot_id)
     plot = documents.with_uploads(plots[plot_id])
+    case["guardrail"] = guardrail.check_input(plot)  # recomputed each redraw, since uploads change the documents
     render_pipeline(plot, case)
 
     left, right = st.columns([1, 2.3], gap="large")
@@ -475,6 +501,7 @@ def main() -> None:
         html('<p class="eyebrow">Plot</p>')
         render_outline(plot)
         render_facts(plot)
+        render_input_check(case)
         st.write("")
         render_documents(plot, case)
     with right:

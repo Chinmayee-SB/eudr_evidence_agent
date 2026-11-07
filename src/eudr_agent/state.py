@@ -30,6 +30,7 @@ class Finding(TypedDict, total=False):
 
 class CaseFile(TypedDict, total=False):
     plot: PlotInput
+    guardrail: dict[str, Any]    # input check: passed, blocked, dropped, warnings (see guardrail.py)
     findings: list[Finding]      # geo-analyst results
     rules: list[dict[str, Any]]  # rules-agent answers: question, answer, citations
     conflicts: list[str]         # where datasets disagree
