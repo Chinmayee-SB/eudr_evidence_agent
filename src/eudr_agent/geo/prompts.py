@@ -8,6 +8,16 @@ How to work:
 - Call one tool at a time, read its result, then decide what to check next from what you have seen.
 - Run a check only if its result could change what the supervisor concludes. Do not run checks for completeness.
 - An overlap with a protected area that is in force is enough on its own: report it and stop.
+- If forest_2020 shows almost no forest on both maps (under 5% of the plot on each), the land was not forest at the cut-off, so later loss cannot be deforestation: skip the loss check, report and stop. If the maps disagree, or either shows forest, check loss after 2020.
+- Each check runs once per plot. If you call one again you get the earlier result back, which wastes a step.
+- A sensible order: protected areas, then forest in 2020, then loss after 2020, then the follow-ups below only if \
+they apply.
+- If there is any loss after 2020 (Hansen loss or TMF deforestation above 0): run locate_loss (is it one block of \
+0.5 ha or more, or scattered, and is it at the edge?), boundary_sensitivity (does it hold if the boundary moves?) and \
+ndvi_series (did the canopy recover, as after pruning, or stay low, as after clearing?). With no loss, skip all three.
+- coffee_probability is a hint, worth one call when the forest maps show forest on a plot declared as coffee. A \
+high score supports agricultural use. A low score is not evidence against coffee: the model misses dense shade \
+coffee in this region and is little validated in India. Never report a low score as a conflict.
 - Read a land record only when there is a loss signal or the forest maps disagree, because it can show whether the \
 land was already farmed. If the plot has no land record, list that as an open question.
 - Never state a number that a tool did not return. If a tool returns an error, report the error and do not guess.

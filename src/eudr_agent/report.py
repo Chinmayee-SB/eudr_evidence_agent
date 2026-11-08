@@ -28,6 +28,10 @@ TOOL_LABELS = {
     "loss_after_2020": "Loss after 2020",
     "forest_2020": "Forest in 2020",
     "read_document": "Land record",
+    "locate_loss": "Where the loss is",
+    "boundary_sensitivity": "Boundary shift",
+    "ndvi_series": "Greenness by year",
+    "coffee_probability": "Coffee model",
 }
 NO_VERDICT = ("No verdict issued. The supervisor review, verdict rules and officer sign-off are not built yet, "
               "so this pack contains evidence only.")
@@ -76,6 +80,25 @@ def key_figures(finding: Finding) -> list[tuple[str, str]]:
                 ("TMF degradation", f"{v['tmf_degradation_ha']} ha ({_by_year(v['tmf_degradation_by_year'])})")]
     if tool == "read_document":
         return [("File", v["file"]), ("Status", "Mock document, not a real record")]
+    if tool == "locate_loss":
+        rows = [("Pattern", f"{v['pattern']}: {v['patch_count']} patch(es), largest {_ha(v['largest_patch_ha'])}"),
+                ("Loss at the edge", f"{v['loss_at_edge_ha']} ha of {v['loss_ha']} ha (within 30 m)"),
+                ("Loss on 2020 forest", _ha(v["loss_in_gfc2020_forest_ha"]))]
+        return rows + [(f"Patch {i}", f"{p['area_ha']} ha, {p['first_year']}-{p['last_year']}, "
+                                      f"{p['distance_to_edge_m']} m from edge") for i, p in enumerate(v["patches"], 1)]
+    if tool == "boundary_sensitivity":
+        rows = [("Result", "Stable" if v["stable"] else "Changes: " + "; ".join(v["changes"]))]
+        return rows + [(name.replace("_", " ").capitalize(),
+                        f"{x['plot_ha']} ha plot, {x['loss_ha']} ha loss, {x['gfc2020_forest_share']:.0%} forest")
+                       for name, x in v["variants"].items()]
+    if tool == "ndvi_series":
+        rows = [("Plot", ", ".join(f"{y}: {d['ndvi']}" for y, d in v["plot"].items()))]
+        if v["loss_pixels"]:
+            rows.append(("Loss pixels", ", ".join(f"{y}: {n}" for y, n in v["loss_pixels"].items())))
+        return rows + [("Season", v["season"])]
+    if tool == "coffee_probability":
+        return [(f"{year}", f"mean {d['mean_probability']}, {d['share_above_threshold']:.0%} above {v['threshold']}")
+                for year, d in v["by_year"].items()]
     return [(key, str(value)) for key, value in v.items()]
 
 

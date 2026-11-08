@@ -21,6 +21,7 @@ from eudr_agent.state import Finding, PlotInput
 MAPS_DISAGREE = 0.30   # forest share gap between GFC2020 and Hansen that counts as disagreement
 FOREST_ON_MAP = 0.50   # GFC2020 share above which the plot "looks like forest" on the EU map
 CUT_OFF_YEAR = 2020
+NO_FOREST = 0.05      # both maps below this share: the plot was not forest at the cut-off
 
 
 def latest(findings: list[Finding], tool: str) -> Finding | None:
@@ -36,6 +37,12 @@ def values(findings: list[Finding], tool: str) -> dict[str, Any]:
 
 def in_protected_area(findings: list[Finding]) -> bool:
     return bool(values(findings, "protected_area_check").get("inside_protected_area"))
+
+
+def not_forest_in_2020(findings: list[Finding]) -> bool:
+    """Both forest maps agree the plot had almost no forest at the cut-off, so later loss cannot be deforestation."""
+    forest = values(findings, "forest_2020")
+    return bool(forest) and forest["gfc2020_forest_share"] < NO_FOREST and forest["hansen_tree_cover_share"] < NO_FOREST
 
 
 def has_loss(findings: list[Finding]) -> bool:
@@ -96,6 +103,9 @@ NEEDS = [
 ]
 
 
+LOSS_NEEDS = {"loss_after_2020", "loss_location", "boundary_shift"}
+
+
 def available_tools() -> set[str]:
     """The tools the geo-analyst is actually offered: the single source of what can be checked."""
     from eudr_agent.geo.agent import TOOL_SCHEMAS  # imported here so this module loads without the agent
@@ -113,6 +123,9 @@ def review_evidence(plot: PlotInput, findings: list[Finding], available: set[str
     for need in NEEDS:
         if protected and need.key != "protected_area":
             skipped.append(f"{need.question} (not needed: the plot is inside a protected area in force)")
+            continue
+        if need.key in LOSS_NEEDS and not_forest_in_2020(findings):
+            skipped.append(f"{need.question} (not needed: both maps show no forest in 2020)")
             continue
         if not need.when(plot, findings, conflicts):
             continue

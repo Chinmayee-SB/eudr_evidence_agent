@@ -23,7 +23,7 @@ dev = ["pytest>=8.0"]
 # Shared case storage for a deployment: set DATABASE_URL to use it instead of SQLite.
 postgres = ["langgraph-checkpoint-postgres>=3.0", "psycopg[binary]>=3.2", "psycopg-pool>=3.2"]
 # Added when the Whisp baseline is built:
-geo = ["openforis-whisp", "geopandas"]
+geo = ["openforis-whisp==3.0.0a22", "geopandas"]  # only alpha releases exist; pinned
 
 [build-system]
 requires = ["setuptools>=68"]

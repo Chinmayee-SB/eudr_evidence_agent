@@ -14,6 +14,7 @@ in a later session. Each case's full trace is in runs/traces/<CASE_ID>.jsonl.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 
 from eudr_agent import documents
@@ -89,3 +90,9 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    # By here the case is saved and the database connection is closed. onnxruntime (used by the rules agent's
+    # vector search) can deadlock in its shutdown code on macOS, leaving the process hanging after its work is
+    # done; exiting directly skips that cleanup. A sys.exit() above still reports errors as usual.
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)

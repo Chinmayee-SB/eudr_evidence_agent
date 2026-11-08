@@ -1,0 +1,5 @@
+plot_id,manual_label,whisp_risk_pcrop,Ind_01_treecover,Ind_02_commodities,Ind_03_disturbance_before_2020,Ind_04_disturbance_after_2020,Ind_05_primary_2020,Ind_06_nat_reg_forest_2020,whisp_coffee_2020,ours_in_protected_area,ours_gfc2020_forest_share,ours_hansen_tree_cover_share,ours_loss_after_2020_ha
+C-01,Clear,more_info_needed,yes,no,no,no,yes,yes,0.07699999958276749,False,0.97,0.98,0
+C-02,Clear,more_info_needed,yes,no,no,no,yes,yes,0.30300000309944153,False,0.86,0.94,0.42
+K-01,Clear,low,no,no,no,no,no,yes,1.6260000467300415,False,0.09,0.81,0.21
+N-01,High risk,more_info_needed,yes,no,no,no,yes,yes,0.01899999938905239,True,1.0,1.0,0

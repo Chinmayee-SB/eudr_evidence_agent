@@ -1,8 +1,9 @@
 """Tools for the geo-analyst agent.
 
 Each tool takes a plot geometry and returns numbers in a fixed shape (see state.Finding).
-Built: validate_geometry, read_document, protected_area_check, forest_2020, loss_after_2020.
-The rest are still planned, with signatures fixed so later work can be written against them.
+Local: validate_geometry, read_document.
+Satellite: protected_area_check, forest_2020, loss_after_2020, locate_loss, boundary_sensitivity,
+coffee_probability, ndvi_series. Planned: run_whisp (to be a separate baseline, not an agent tool).
 
 Earth Engine does the pixel counting on Google's servers, so no satellite files are downloaded.
 Results are cached per plot and dataset version, so repeat runs are fast and work during an outage.
@@ -11,6 +12,7 @@ A failed query returns a Finding with `error` set, and is not cached.
 
 from __future__ import annotations
 
+import datetime
 import functools
 import hashlib
 import json
@@ -40,7 +42,22 @@ TMF_DEFORESTATION = "projects/JRC/TMF/v1_2025/DeforestationYear"
 TMF_DEGRADATION = "projects/JRC/TMF/v1_2025/DegradationYear"
 GFC2020 = "JRC/GFC2020/V4"
 WDPA = "WCMC/WDPA/current/polygons"
+COFFEE = "projects/forestdatapartnership/assets/coffee/model_2026a"
+S2 = "COPERNICUS/S2_SR_HARMONIZED"
+CLOUD_SCORE = "GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED"
 DOCUMENTS_DIR = PLOTS_DIR / "documents"
+
+BLOCK_HA = 0.5            # EUDR Art. 2(4): forest is land over 0.5 ha, so a cleared patch this size could be a forest
+EDGE_M = 30               # one Landsat pixel; loss this close to the edge may be a boundary error
+BOUNDARY_SHIFT_M = 30     # how far the boundary is moved out and in
+MAX_PATCHES_LISTED = 10
+COFFEE_YEARS = (2020, 2024)  # the cut-off year and the latest map
+COFFEE_THRESHOLD = 0.5    # our choice (the midpoint); the model is not validated in India, so treat as a hint
+NDVI_FIRST_YEAR = 2019
+_TODAY = datetime.date.today()
+NDVI_LAST_YEAR = _TODAY.year if _TODAY.month > 4 else _TODAY.year - 1  # a dry season counts once it is over
+DRY_SEASON = ("01-01", "03-31")  # Western Ghats dry season: fewest clouds, and canopy loss shows most clearly
+CLEAR_SKY = 0.6           # Cloud Score+ cs_cdf at or above this counts as a clear pixel
 
 
 # ---------- Earth Engine connection and cache ----------
@@ -232,28 +249,133 @@ def loss_after_2020(geometry: Geometry) -> dict[str, Any]:
             "tmf_degradation_ha": round(sum(degradation.values()), 2), "tmf_degradation_by_year": degradation}
 
 
+def _loss_mask(ee: Any) -> Any:
+    """Pixels with any clearing signal after 2020: Hansen tree-cover loss or JRC TMF deforestation."""
+    hansen = ee.Image(HANSEN).select("lossyear").unmask(0).gt(20)
+    tmf = ee.ImageCollection(TMF_DEFORESTATION).mosaic().unmask(0).gt(2020)
+    return hansen.Or(tmf)
+
+
+def _first_loss_year(ee: Any) -> Any:
+    """Earliest year of either signal, per pixel (no value where there is no loss)."""
+    hansen = ee.Image(HANSEN).select("lossyear")
+    hansen = hansen.updateMask(hansen.gt(20)).add(2000)
+    tmf = ee.ImageCollection(TMF_DEFORESTATION).mosaic()
+    tmf = tmf.updateMask(tmf.gt(2020))
+    return ee.ImageCollection([hansen.rename("year").toInt(), tmf.rename("year").toInt()]).min()
+
+
+@_satellite_tool(f"{HANSEN}; {TMF_DEFORESTATION}; {GFC2020}",
+                 f"Patches are joined 30 m loss pixels. Loss within {EDGE_M} m of the edge may come from an imprecise "
+                 f"boundary rather than the plot. Patch size is compared with the 0.5 ha in the EUDR forest definition.")
+def locate_loss(geometry: Geometry) -> dict[str, Any]:
+    """Where the post-2020 loss is: patches, their size and year, distance to the plot edge, and 2020 forest."""
+    ee = _ee()
+    region = ee.Geometry(geometry)
+    edge = ee.Geometry.LineString(geometry["coordinates"][0])
+    mask = _loss_mask(ee)
+    patches = mask.selfMask().rename("loss").reduceToVectors(
+        geometry=region, scale=30, crs=ee.Image(HANSEN).projection(), geometryType="polygon",
+        eightConnected=True, maxPixels=int(1e9))
+    years = _first_loss_year(ee)
+    gfc = ee.Image(GFC2020).select("Map").eq(1)
+
+    def describe(f: Any) -> Any:
+        shape_ = f.geometry().intersection(region, 1)
+        stats = years.reduceRegion(ee.Reducer.minMax(), shape_, 30, maxPixels=int(1e9))
+        forest = ee.Image.pixelArea().updateMask(gfc).reduceRegion(ee.Reducer.sum(), shape_, 10, maxPixels=int(1e9))
+        return ee.Feature(None, {"area_m2": shape_.area(1), "edge_m": shape_.distance(edge, 1),
+                                 "first": stats.get("year_min"), "last": stats.get("year_max"),
+                                 "forest_m2": forest.get("area")})
+
+    rows = [f["properties"] for f in patches.map(describe).getInfo()["features"]]
+    listed = sorted(({"area_ha": round(r["area_m2"] / 1e4, 2), "distance_to_edge_m": round(r["edge_m"]),
+                      "first_year": r["first"], "last_year": r["last"],
+                      "gfc2020_forest_ha": round((r["forest_m2"] or 0) / 1e4, 2)} for r in rows if r["area_m2"] > 0),
+                    key=lambda r: -r["area_ha"])
+    total = round(sum(r["area_ha"] for r in listed), 2)
+    at_edge = round(sum(r["area_ha"] for r in listed if r["distance_to_edge_m"] <= EDGE_M), 2)
+    largest = listed[0]["area_ha"] if listed else 0.0
+    return {"loss_ha": total, "patch_count": len(listed), "largest_patch_ha": largest,
+            "pattern": "none" if not listed else "block" if largest >= BLOCK_HA else "scattered",
+            "loss_at_edge_ha": at_edge, "share_at_edge": round(at_edge / total, 2) if total else 0.0,
+            "loss_in_gfc2020_forest_ha": round(sum(r["gfc2020_forest_ha"] for r in listed), 2),
+            "patches": listed[:MAX_PATCHES_LISTED], "patches_not_listed": max(0, len(listed) - MAX_PATCHES_LISTED)}
+
+
+@_satellite_tool(f"{HANSEN}; {TMF_DEFORESTATION}; {GFC2020}",
+                 f"The boundary is moved {BOUNDARY_SHIFT_M} m out and {BOUNDARY_SHIFT_M} m in, because hand-drawn "
+                 "plot outlines are approximate. A result that flips is not reliable without a surveyed boundary.")
+def boundary_sensitivity(geometry: Geometry) -> dict[str, Any]:
+    """Loss and 2020 forest for the plot as drawn, grown and shrunk; says whether the outcome changes."""
+    ee = _ee()
+    region = ee.Geometry(geometry)
+    shapes = {"as_drawn": region, "grown": region.buffer(BOUNDARY_SHIFT_M, 1),
+              "shrunk": region.buffer(-BOUNDARY_SHIFT_M, 1)}
+    forest = ee.Image(GFC2020).select("Map").eq(1)
+    variants = {}
+    for name, shape_ in shapes.items():
+        # each dataset at its own resolution, as in loss_after_2020 and forest_2020, so "as_drawn" matches them
+        loss_ha = _area_ha(ee, _loss_mask(ee), shape_, 30)
+        forest_ha = _area_ha(ee, forest, shape_, 10)
+        plot_ha = round(shape_.area(1).getInfo() / 10_000, 2)
+        variants[name] = {"plot_ha": plot_ha, "loss_ha": loss_ha,
+                          "gfc2020_forest_share": round(forest_ha / plot_ha, 2) if plot_ha else 0.0}
+    loss_found = {name: v["loss_ha"] > 0 for name, v in variants.items()}
+    mostly_forest = {name: v["gfc2020_forest_share"] >= 0.5 for name, v in variants.items()}
+    changes = [what for what, flags in (("whether any loss is found", loss_found),
+                                        ("whether the plot is mostly forest on GFC2020", mostly_forest))
+               if len(set(flags.values())) > 1]
+    drawn, inner = variants["as_drawn"]["loss_ha"], variants["shrunk"]["loss_ha"]
+    if drawn > 0 and inner < drawn / 2:
+        changes.append(f"most of the loss lies within {BOUNDARY_SHIFT_M} m of the boundary "
+                       f"({drawn} ha as drawn, {inner} ha with the boundary moved in)")
+    return {"shift_m": BOUNDARY_SHIFT_M, "variants": variants, "stable": not changes, "changes": changes}
+
+
+@_satellite_tool(COFFEE, f"Forest Data Partnership coffee model, 10 m. Not peer-reviewed and little validated in "
+                         f"India. Share above {COFFEE_THRESHOLD} uses our threshold. A hint about land use, not proof.")
+def coffee_probability(geometry: Geometry) -> dict[str, Any]:
+    """Mean coffee probability and the share of the plot above the threshold, at the cut-off and the latest year."""
+    ee = _ee()
+    region = ee.Geometry(geometry)
+    years = {}
+    for year in COFFEE_YEARS:
+        prob = ee.ImageCollection(COFFEE).filterDate(f"{year}-01-01", f"{year + 1}-01-01").mosaic().select("probability")
+        stats = prob.addBands(prob.gte(COFFEE_THRESHOLD).rename("likely")).reduceRegion(
+            ee.Reducer.mean(), region, 10, maxPixels=int(1e9)).getInfo()
+        years[year] = {"mean_probability": None if stats["probability"] is None else round(stats["probability"], 2),
+                       "share_above_threshold": None if stats["likely"] is None else round(stats["likely"], 2)}
+    return {"threshold": COFFEE_THRESHOLD, "by_year": years}
+
+
+@_satellite_tool(f"{S2}; {CLOUD_SCORE}; dry seasons {NDVI_FIRST_YEAR}-{NDVI_LAST_YEAR}",  # a new season = new cache key
+                 "Median NDVI of clear Sentinel-2 pixels, January to March each year. Pruning dips and recovers "
+                 "within a year or two; clearing stays low. Shade coffee and forest have similar NDVI, so this cannot "
+                 "tell them apart.")
+def ndvi_series(geometry: Geometry) -> dict[str, Any]:
+    """Dry-season NDVI per year for the whole plot and, if there is post-2020 loss, for the loss pixels only."""
+    ee = _ee()
+    region = ee.Geometry(geometry)
+    loss = _loss_mask(ee)
+    by_year, loss_years = {}, {}
+    for year in range(NDVI_FIRST_YEAR, NDVI_LAST_YEAR + 1):
+        start, end = f"{year}-{DRY_SEASON[0]}", f"{year}-{DRY_SEASON[1]}"
+        images = ee.ImageCollection(S2).filterBounds(region).filterDate(start, end).linkCollection(
+            ee.ImageCollection(CLOUD_SCORE), ["cs_cdf"])
+        ndvi = images.map(lambda im: im.normalizedDifference(["B8", "B4"]).updateMask(
+            im.select("cs_cdf").gte(CLEAR_SKY))).median().rename("ndvi")
+        stats = ndvi.addBands(ndvi.updateMask(loss).rename("loss_ndvi")).addBands(
+            ndvi.mask().rename("clear")).reduceRegion(ee.Reducer.mean(), region, 10, maxPixels=int(1e9)).getInfo()
+        by_year[year] = {"ndvi": None if stats["ndvi"] is None else round(stats["ndvi"], 3),
+                         "clear_share": round(stats["clear"] or 0.0, 2)}
+        if stats["loss_ndvi"] is not None:
+            loss_years[year] = round(stats["loss_ndvi"], 3)
+    return {"season": "January to March", "plot": by_year, "loss_pixels": loss_years}
+
+
 # ---------- planned ----------
 
 def run_whisp(geometry: Geometry) -> dict[str, Any]:
-    """openforis-whisp stats + risk_pcrop for one plot."""
-    raise NotImplementedError
-
-
-def coffee_probability(geometry: Geometry, year: int = 2020) -> dict[str, Any]:
-    """Forest Data Partnership coffee model: share of plot above threshold."""
-    raise NotImplementedError
-
-
-def ndvi_series(geometry: Geometry, years: range = range(2019, 2026)) -> dict[str, Any]:
-    """Sentinel-2 dry-season (Jan-Mar) median NDVI per year, for the plot or one loss block."""
-    raise NotImplementedError
-
-
-def locate_loss(geometry: Geometry) -> dict[str, Any]:
-    """Loss patches after 2020: size, count, distance to plot edge, overlap with 2020 coffee/forest."""
-    raise NotImplementedError
-
-
-def boundary_sensitivity(geometry: Geometry, buffer_m: float = 30) -> dict[str, Any]:
-    """Re-run loss checks on the plot grown and shrunk by buffer_m; report whether the result changes."""
+    """openforis-whisp stats + risk_pcrop for one plot. To be a separate baseline script, not an agent tool."""
     raise NotImplementedError

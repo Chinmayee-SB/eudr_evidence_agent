@@ -19,7 +19,7 @@ from eudr_agent.geo import prompts, tools
 from eudr_agent.state import Finding, PlotInput
 from eudr_agent.tracing import Tracer
 
-MAX_STEPS = 6  # tool rounds; at the limit the tools are withdrawn and the agent must report
+MAX_STEPS = 10  # tool rounds (8 checks exist); at the limit the tools are withdrawn and the agent must report
 
 REASON = {"type": "string", "description": "One sentence: why this check now, given what you have seen so far."}
 
@@ -35,9 +35,20 @@ TOOL_SCHEMAS = [
     _schema("loss_after_2020", "Tree-cover loss on the plot after 2020 from Hansen, and deforestation and degradation "
                                "from JRC TMF, in hectares."),
     _schema("forest_2020", "How much of the plot was forest around 2020, on the JRC GFC2020 map and Hansen tree cover."),
+    _schema("locate_loss", "Where the post-2020 loss is: patches, their size against the 0.5 ha in the forest "
+                           "definition, first and last year, distance to the plot edge, and how much was 2020 forest."),
+    _schema("boundary_sensitivity", "Loss and 2020 forest with the plot boundary moved 30 m out and 30 m in, and "
+                                    "whether the outcome changes, since hand-drawn boundaries are approximate."),
+    _schema("ndvi_series", "Sentinel-2 dry-season greenness (NDVI) per year since 2019, for the plot and for its "
+                           "post-2020 loss pixels: a dip that recovers suggests pruning, one that stays low clearing."),
+    _schema("coffee_probability", "Forest Data Partnership coffee model for 2020 and 2024: mean probability and share "
+                                  "of the plot above 0.5. A hint about agricultural use only."),
     _schema("read_document", "Read one of the plot's land records.",
             document={"type": "string", "description": "File name from the plot's document list."}),
 ]
+
+
+SATELLITE_TOOLS = {t["function"]["name"] for t in TOOL_SCHEMAS} - {"read_document"}
 
 
 class GeoState(TypedDict, total=False):
@@ -45,6 +56,7 @@ class GeoState(TypedDict, total=False):
     messages: list[dict[str, Any]]
     steps: int
     findings: list[Finding]
+    prior_findings: list[Finding]  # from earlier rounds of the same case; repeats are answered from these
     summary: str
     conflicts: list[str]
     open_questions: list[str]
@@ -66,9 +78,26 @@ def _run_tool(plot: PlotInput, name: str, args: dict[str, Any]) -> Finding:
         if args.get("document") not in by_name:
             return Finding(tool=name, dataset="mocked land records", error=f"no such document; available: {list(by_name)}")
         return tools.read_document(by_name[args["document"]])
-    if name in ("protected_area_check", "loss_after_2020", "forest_2020"):
+    if name in SATELLITE_TOOLS:
         return getattr(tools, name)(plot["geometry"])
     return Finding(tool=name, dataset="", error=f"unknown tool: {name}")
+
+
+def _call_key(name: str, args: dict[str, Any]) -> tuple[str, str]:
+    """Two calls are the same check if they name the same tool (and, for documents, the same file)."""
+    return name, str(args.get("document", "")) if name == "read_document" else ""
+
+
+def _earlier_result(state: GeoState, name: str, args: dict[str, Any]) -> Finding | None:
+    """A successful result of the same check already on this case, so a step is not spent re-running it."""
+    key = _call_key(name, args)
+    for finding in [*state.get("prior_findings", []), *state.get("findings", [])]:
+        if finding.get("error") or finding.get("tool") != name:
+            continue
+        file = finding.get("values", {}).get("file", "") if name == "read_document" else ""
+        if (name, file) == key:
+            return finding
+    return None
 
 
 def think(state: GeoState) -> GeoState:
@@ -97,12 +126,19 @@ def act(state: GeoState) -> GeoState:
                 args = json.loads(call["function"]["arguments"] or "{}")
             except json.JSONDecodeError:
                 args = {}
-            finding = _run_tool(state["plot"], name, args)
-            findings.append(finding)
-            rec.update(tool=name, reason=args.get("reason", ""), finding=finding)
-            result = finding.get("error") or ("from cache" if finding.get("cached") else "ok")
-            rec["summary"] = f"{name} [{result}]  why: {args.get('reason', '')[:90]}"
-        messages.append({"role": "tool", "tool_call_id": call["id"], "content": json.dumps(finding)})
+            earlier = _earlier_result({**state, "findings": findings}, name, args)
+            if earlier:  # not run again and not recorded twice; the model is told it already has this
+                content = {"note": "This check already ran on this plot; its result is repeated here. "
+                                   "Do not call it again.", "result": earlier}
+                rec.update(tool=name, reason=args.get("reason", ""), repeat=True)
+                rec["summary"] = f"{name} [repeat, not re-run]  why: {args.get('reason', '')[:80]}"
+            else:
+                content = _run_tool(state["plot"], name, args)
+                findings.append(content)
+                rec.update(tool=name, reason=args.get("reason", ""), finding=content)
+                result = content.get("error") or ("from cache" if content.get("cached") else "ok")
+                rec["summary"] = f"{name} [{result}]  why: {args.get('reason', '')[:90]}"
+        messages.append({"role": "tool", "tool_call_id": call["id"], "content": json.dumps(content)})
     return {"messages": messages, "findings": findings, "steps": state["steps"] + 1}
 
 
@@ -139,22 +175,31 @@ def build_graph():
 _GRAPH = None
 
 
-def _opening_message(plot: PlotInput, task: str | None) -> str:
+def _opening_message(plot: PlotInput, task: str | None, prior: list[Finding]) -> str:
     details = {
         "plot_id": plot["plot_id"], "area_ha": plot.get("area_ha"), "declared_crop": plot.get("declared_crop"),
         "crop_since": plot.get("crop_since", "not stated"),
         "documents": [path.rsplit("/", 1)[-1] for path in plot.get("documents", [])],
     }
-    return f"Plot: {json.dumps(details)}\nTask: {task or 'Gather the evidence needed to screen this plot.'}"
+    text = f"Plot: {json.dumps(details)}\nTask: {task or 'Gather the evidence needed to screen this plot.'}"
+    if prior:  # a follow-up round: show what is already known, so it is built on and not repeated
+        known = [{"tool": f["tool"], "values": f["values"]} if f["tool"] != "read_document"
+                 else {"tool": f["tool"], "file": f["values"]["file"], "text": f["values"]["text"][:1500]}
+                 for f in prior if not f.get("error")]
+        text += f"\nEvidence already gathered in earlier rounds (do not repeat these checks): {json.dumps(known)}"
+    return text
 
 
-def analyse(plot: PlotInput, task: str | None = None, tracer: Tracer | None = None, echo: bool = False) -> GeoState:
-    """Run the geo-analyst on one plot. `task` lets the supervisor ask for a specific follow-up."""
+def analyse(plot: PlotInput, task: str | None = None, tracer: Tracer | None = None, echo: bool = False,
+            prior_findings: list[Finding] | None = None) -> GeoState:
+    """Run the geo-analyst on one plot. `task` lets the supervisor ask for a specific follow-up, and
+    `prior_findings` passes what earlier rounds found, so a follow-up does not repeat them."""
     global _GRAPH
     if _GRAPH is None:
         _GRAPH = build_graph()
     tracer = tracer or Tracer("geo_analyst", echo=echo)
     messages = [{"role": "system", "content": prompts.GEO_SYSTEM},
-                {"role": "user", "content": _opening_message(plot, task)}]
-    return _GRAPH.invoke({"plot": plot, "messages": messages, "steps": 0, "findings": [], "tracer": tracer},
+                {"role": "user", "content": _opening_message(plot, task, prior_findings or [])}]
+    return _GRAPH.invoke({"plot": plot, "messages": messages, "steps": 0, "findings": [],
+                          "prior_findings": prior_findings or [], "tracer": tracer},
                          {"recursion_limit": 3 * MAX_STEPS + 5})

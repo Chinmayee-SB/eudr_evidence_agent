@@ -62,9 +62,37 @@ def test_step_limit_withdraws_tools_and_forces_a_report(monkeypatch):
     replies = [forever] * agent.MAX_STEPS + [says(REPORT)]
     offered = scripted(monkeypatch, replies)
     state = agent.analyse(load_plots()["C-01"])
-    assert len(state["findings"]) == agent.MAX_STEPS
     assert state["hit_limit"] is True
     assert offered[-1] is None and offered[0] is not None
+    assert len(offered) == agent.MAX_STEPS + 1
+
+
+def test_repeated_check_is_not_rerun_or_recorded_twice(monkeypatch):
+    ran = []
+    real = tools.forest_2020
+    monkeypatch.setattr(tools, "forest_2020", lambda g: ran.append(1) or real(g))
+    scripted(monkeypatch, [calls(tool_call("forest_2020")), calls(tool_call("forest_2020", call_id="2")), says(REPORT)])
+    state = agent.analyse(load_plots()["C-01"])
+    assert len(ran) == 1 and [f["tool"] for f in state["findings"]] == ["forest_2020"]
+    repeat = [m for m in state["messages"] if m["role"] == "tool"][1]["content"]
+    assert "already ran" in repeat and "gfc2020_forest_share" in repeat
+
+
+def test_follow_up_round_sees_and_does_not_repeat_earlier_findings(monkeypatch):
+    plot = load_plots()["K-01"]
+    earlier = [tools.forest_2020(plot["geometry"])]
+    scripted(monkeypatch, [calls(tool_call("forest_2020")), says(REPORT)])
+    state = agent.analyse(plot, task="Read the land record.", prior_findings=earlier)
+    assert state["findings"] == []  # the repeat was answered from the earlier round
+    assert "Evidence already gathered" in state["messages"][1]["content"]
+
+
+def test_failed_check_can_be_retried(monkeypatch):
+    plot = load_plots()["K-01"]
+    failed = [{"tool": "forest_2020", "dataset": "x", "error": "quota"}]
+    scripted(monkeypatch, [calls(tool_call("forest_2020")), says(REPORT)])
+    state = agent.analyse(plot, prior_findings=failed)
+    assert [f["tool"] for f in state["findings"]] == ["forest_2020"]
 
 
 def test_tool_error_goes_back_to_the_llm(monkeypatch):

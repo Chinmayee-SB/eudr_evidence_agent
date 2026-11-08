@@ -20,6 +20,7 @@ from eudr_agent.supervisor.graph import build_graph, get_case, resume_case, star
 from eudr_agent.supervisor.review import review_evidence
 
 CORE = ("protected_area_check", "forest_2020", "loss_after_2020")
+SATELLITE = (*CORE, "locate_loss", "boundary_sensitivity", "ndvi_series", "coffee_probability")
 
 
 @pytest.fixture(autouse=True)
@@ -27,13 +28,13 @@ def no_llm(monkeypatch):
     monkeypatch.setattr(Settings, "llm_enabled", property(lambda self: False))
 
 
-def core_findings(plot):
-    return [getattr(tools, name)(plot["geometry"]) for name in CORE]
+def core_findings(plot, names=SATELLITE):
+    return [getattr(tools, name)(plot["geometry"]) for name in names]
 
 
 def stand_in_geo(calls=None, fail=False):
     """Runs the real (cached) tools in a fixed order; reads documents when the task asks."""
-    def analyse(plot, task=None, tracer=None):
+    def analyse(plot, task=None, tracer=None, prior_findings=None):
         if calls is not None:
             calls.append(task)
         if fail:
@@ -92,13 +93,26 @@ def test_failed_tool_is_a_gap_and_a_retry_replaces_it():
     assert "forest_2020" in retried["answered"]
 
 
-def test_planned_tools_become_required_once_offered():
+def test_tools_become_required_once_offered():
     plot = load_plots()["K-01"]  # has loss
-    now = review_evidence(plot, core_findings(plot))
-    later = review_evidence(plot, core_findings(plot),
-                            available={*CORE, "read_document", "locate_loss", "boundary_sensitivity"})
-    assert len(now["not_checkable"]) == 2
-    assert {"loss_location", "boundary_shift"} <= {g["need"] for g in later["gaps"]}
+    findings = core_findings(plot, CORE)
+    before = review_evidence(plot, findings, available={*CORE, "read_document"})
+    after = review_evidence(plot, findings)  # what the geo-analyst offers now
+    assert len(before["not_checkable"]) == 2
+    assert {"loss_location", "boundary_shift"} <= {g["need"] for g in after["gaps"]}
+    assert after["not_checkable"] == []
+
+
+def test_no_forest_on_both_maps_makes_the_loss_checks_unnecessary():
+    plot = load_plots()["K-01"]
+    no_forest = {"tool": "forest_2020", "dataset": "x", "values": {
+        "plot_ha": 9.0, "gfc2020_forest_ha": 0.2, "gfc2020_forest_share": 0.02,
+        "hansen_tree_cover_ha": 0.3, "hansen_tree_cover_share": 0.03}}
+    review = review_evidence(plot, [tools.protected_area_check(plot["geometry"]), no_forest])
+    assert review["gaps"] == [] and any("no forest in 2020" in s for s in review["skipped"])
+    # one map showing forest is a disagreement, so loss must still be checked
+    some = {**no_forest, "values": {**no_forest["values"], "hansen_tree_cover_share": 0.81}}
+    assert "loss_after_2020" in [g["need"] for g in review_evidence(plot, [no_forest | some])["gaps"]]
 
 
 # ---------- decision ----------

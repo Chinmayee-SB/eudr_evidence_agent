@@ -59,13 +59,12 @@ def guardrail_node(case: CaseFile) -> CaseFile:
 def make_geo_node(analyse: Callable[..., Any]) -> Callable[[CaseFile], CaseFile]:
     def geo_node(case: CaseFile) -> CaseFile:
         task = case.get("geo_task")
-        done = sorted({f["tool"] for f in case.get("findings", []) if not f.get("error")})
-        if task and done:  # each geo round starts a fresh conversation, so say what is already known
-            task += f" Already checked in this case: {', '.join(done)}; do not repeat these."
         report: dict[str, Any] = {"round": len(case.get("geo_reports", [])) + 1, "task": task or "initial screening"}
         new_findings = []
         try:
-            final = analyse(case["guardrail"]["plot"], task=task, tracer=_tracer(case))
+            # earlier findings go in, so a follow-up builds on them instead of repeating them
+            final = analyse(case["guardrail"]["plot"], task=task, tracer=_tracer(case),
+                            prior_findings=case.get("findings", []))
             new_findings = final["findings"]
             report |= {"summary": final["summary"], "conflicts": final["conflicts"],
                        "open_questions": final["open_questions"], "hit_limit": final.get("hit_limit", False)}

@@ -1,0 +1,18 @@
+{
+ "tool": "coffee_probability",
+ "dataset": "projects/forestdatapartnership/assets/coffee/model_2026a",
+ "values": {
+  "threshold": 0.5,
+  "by_year": {
+   "2020": {
+    "mean_probability": 0.01,
+    "share_above_threshold": 0.0
+   },
+   "2024": {
+    "mean_probability": 0.04,
+    "share_above_threshold": 0.02
+   }
+  }
+ },
+ "note": "Forest Data Partnership coffee model, 10 m. Not peer-reviewed and little validated in India. Share above 0.5 uses our threshold. A hint about land use, not proof."
+}

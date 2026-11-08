@@ -13,7 +13,7 @@ Clear / Needs evidence / High risk with an evidence file. A person approves ever
 | Part | Owner | Status |
 |---|---|---|
 | Rules agent: agentic RAG over EUDR texts | Chinmayee | **Working** (offline and LLM modes), eval in place |
-| Geo-analyst agent + satellite tools | Taran | **Working**: 5 of 10 tools (`geo/tools.py`) and the ReAct loop (`geo/agent.py`) |
+| Geo-analyst agent + satellite tools | Taran | **Working**: 9 tools (7 satellite, document, geometry) and the ReAct loop; Whisp runs as a separate baseline |
 | Input guardrail | Chinmayee | **Working** (`guardrail.py`): blocks, drops or warns before any agent runs |
 | Supervisor: review, routing, officer pause, saved cases | Chinmayee | **Working** in the terminal (`supervisor/`, `scripts/run_case.py`); not yet on the desk |
 | Verdict rules | Alvin | Not built; the 5 rules are written in `supervisor/verdict_rules.py` |
@@ -36,7 +36,8 @@ src/eudr_agent/
     agent.py       LangGraph loop: retrieve -> grade -> rewrite/retry -> answer -> check citations
     prompts.py
   geo/agent.py     geo-analyst: ReAct loop that picks tools one at a time
-  geo/tools.py     satellite and document tools (Hansen, TMF, GFC2020, WDPA); Whisp and Sentinel-2 planned
+  geo/tools.py     satellite and document tools: protected areas, forest 2020, loss after 2020, loss location,
+                   boundary shift, Sentinel-2 NDVI, coffee model (WDPA, GFC2020, Hansen, TMF, S2, FDP)
   guardrail.py     input check before any agent runs
   supervisor/
     graph.py       guardrail -> geo-analyst <-> supervisor <-> rules agent -> verdict -> officer pause -> pack
@@ -65,6 +66,7 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 .venv/bin/python scripts/run_case.py --resume <case id> --approve --reason "..."
 .venv/bin/python scripts/ask.py "Is shade-grown coffee under trees counted as forest?"
 .venv/bin/python eval/run_rag_eval.py            # metrics on 14 rule questions
+.venv/bin/python scripts/run_whisp_baseline.py   # FAO Whisp on the test plots -> eval/whisp_baseline.csv
 .venv/bin/python -m pytest
 .venv/bin/streamlit run app/streamlit_app.py     # the evidence desk, at http://localhost:8501
 ```
