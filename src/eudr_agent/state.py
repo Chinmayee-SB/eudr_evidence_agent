@@ -28,14 +28,39 @@ class Finding(TypedDict, total=False):
     error: str                   # set when the tool failed; the agent must report it, not guess
 
 
+class Decision(TypedDict, total=False):
+    action: Literal["send_back", "ask_rules", "finish"]
+    reason: str
+    task: str                    # send_back: what the geo-analyst should look at
+    questions: list[str]         # ask_rules: what the rules agent should answer
+    source: Literal["llm", "code"]
+    overruled: str               # set when code replaced the LLM's proposal, saying why
+
+
+class OfficerDecision(TypedDict, total=False):
+    decision: Literal["approve", "override", "documents_added"]
+    verdict: Verdict             # override only: the officer's verdict
+    reason: str                  # required for an override
+
+
 class CaseFile(TypedDict, total=False):
-    plot: PlotInput
-    guardrail: dict[str, Any]    # input check: passed, blocked, dropped, warnings (see guardrail.py)
-    findings: list[Finding]      # geo-analyst results
-    rules: list[dict[str, Any]]  # rules-agent answers: question, answer, citations
-    conflicts: list[str]         # where datasets disagree
-    step: int                    # supervisor steps used (max 10)
-    draft_verdict: Verdict
-    missing_documents: list[str]
-    reviewer_gaps: list[str]
-    officer_decision: Literal["approved", "overridden", "documents_added"]
+    """The supervisor graph's state. Everything here is plain JSON, so a checkpoint can save and restore it."""
+    case_id: str                 # also the checkpoint thread and the trace run id
+    plot: PlotInput              # as submitted
+    guardrail: dict[str, Any]    # input check: passed, blocked, dropped, warnings, and the plot agents may see
+    findings: list[Finding]      # every geo-analyst finding, across rounds
+    geo_reports: list[dict[str, Any]]  # each round's summary, conflicts and open questions
+    geo_task: str                # the supervisor's follow-up task for the next geo round
+    review: dict[str, Any]       # latest code review: gaps, conflicts, not_checkable
+    decisions: list[Decision]    # every supervisor decision, with its reason
+    pending_questions: list[str]
+    rules: list[dict[str, Any]]  # rules-agent answers: question, answer, citations, status
+    steps: int                   # agent calls and supervisor decisions so far (budget: MAX_STEPS)
+    send_backs: int
+    reruns: int                  # officer "documents added" re-runs
+    draft_verdict: Verdict | None
+    verdict_note: str
+    officer: OfficerDecision
+    final_verdict: Verdict | None    # the officer's: the draft if approved, theirs if overridden
+    open_items: list[str]        # what the evidence file must say is missing or not checked
+    status: Literal["running", "blocked", "awaiting_officer", "closed"]

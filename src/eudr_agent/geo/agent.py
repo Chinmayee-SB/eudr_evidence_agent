@@ -133,7 +133,7 @@ def build_graph():
     g.add_conditional_edges("think", after_think, {"act": "act", "report": "report"})
     g.add_edge("act", "think")
     g.add_edge("report", END)
-    return g.compile()
+    return g.compile(checkpointer=False)  # run as a worker inside the supervisor, never saved on its own
 
 
 _GRAPH = None

@@ -15,16 +15,23 @@ from typing import Any, Callable, Iterator
 from eudr_agent.config import RUNS_DIR
 
 
+def new_run_id() -> str:
+    return f"{time.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
+
+
 class Tracer:
-    def __init__(self, run_name: str, echo: bool = False, on_event: Callable[[dict[str, Any]], None] | None = None):
-        self.run_id = f"{time.strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:6]}"
+    def __init__(self, run_name: str, echo: bool = False, on_event: Callable[[dict[str, Any]], None] | None = None,
+                 run_id: str | None = None):
+        """Pass `run_id` to continue an existing trace, e.g. when a paused case is resumed in a new process."""
+        self.run_id = run_id or new_run_id()
         self.run_name = run_name
         self.echo = echo
         self.on_event = on_event  # lets a screen show each step as it finishes
-        self.step = 0
         self.events: list[dict[str, Any]] = []
         self.path = RUNS_DIR / "traces" / f"{self.run_id}.jsonl"
         self.path.parent.mkdir(parents=True, exist_ok=True)
+        # a resumed trace carries on numbering where it stopped
+        self.step = sum(1 for _ in self.path.open(encoding="utf-8")) if self.path.exists() else 0
 
     @contextmanager
     def span(self, node: str) -> Iterator[dict[str, Any]]:

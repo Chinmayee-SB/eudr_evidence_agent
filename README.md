@@ -8,13 +8,15 @@ The agent answers one question for a coffee exporter's compliance officer:
 It combines satellite checks with the EU Deforestation Regulation (EUDR) text and returns
 Clear / Needs evidence / High risk with an evidence file. A person approves every verdict.
 
-## Status (31 Oct 2026)
+## Status (8 Nov 2026)
 
 | Part | Owner | Status |
 |---|---|---|
 | Rules agent: agentic RAG over EUDR texts | Chinmayee | **Working** (offline and LLM modes), eval in place |
 | Geo-analyst agent + satellite tools | Taran | **Working**: 5 of 10 tools (`geo/tools.py`) and the ReAct loop (`geo/agent.py`) |
-| Supervisor, reviewer, verdict rules, approval | Alvin | Not built; interfaces defined (`state.py`, `supervisor/verdict_rules.py`) |
+| Input guardrail | Chinmayee | **Working** (`guardrail.py`): blocks, drops or warns before any agent runs |
+| Supervisor: review, routing, officer pause, saved cases | Chinmayee | **Working** in the terminal (`supervisor/`, `scripts/run_case.py`); not yet on the desk |
+| Verdict rules | Alvin | Not built; the 5 rules are written in `supervisor/verdict_rules.py` |
 | Evidence desk: upload, live trace, PDF evidence pack | Chinmayee | **Working** (`app/streamlit_app.py`, `documents.py`, `report.py`); no verdict yet |
 
 ## Layout
@@ -35,7 +37,13 @@ src/eudr_agent/
     prompts.py
   geo/agent.py     geo-analyst: ReAct loop that picks tools one at a time
   geo/tools.py     satellite and document tools (Hansen, TMF, GFC2020, WDPA); Whisp and Sentinel-2 planned
-  supervisor/      planned supervisor, reviewer, verdict rules
+  guardrail.py     input check before any agent runs
+  supervisor/
+    graph.py       guardrail -> geo-analyst <-> supervisor <-> rules agent -> verdict -> officer pause -> pack
+    review.py      code review of the evidence: gaps, conflicts, checks not yet possible
+    decide.py      the LLM proposes the next step; code enforces budgets and required evidence
+    checkpoints.py saved cases: SQLite by default, Postgres if DATABASE_URL is set
+    verdict_rules.py  fixed verdict table (not built)
 data/corpus/notes/ dataset limitation notes the agent can cite
 data/corpus/manual/  drop the Commission guidance + FAQ PDFs here
 data/plots/        4 anonymised test plots, mocked estate details and land records, manual labels
@@ -53,6 +61,8 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 .venv/bin/python scripts/build_index.py          # downloads EUDR texts, builds 300+ chunks and both indexes
 .venv/bin/python scripts/run_geo_tools.py        # satellite checks on the test plots (needs EE_PROJECT, or the cache)
 .venv/bin/python scripts/run_geo_agent.py K-01      # watch the geo-analyst choose tools for one plot
+.venv/bin/python scripts/run_case.py K-01           # full case; stops for the officer and prints the case id
+.venv/bin/python scripts/run_case.py --resume <case id> --approve --reason "..."
 .venv/bin/python scripts/ask.py "Is shade-grown coffee under trees counted as forest?"
 .venv/bin/python eval/run_rag_eval.py            # metrics on 14 rule questions
 .venv/bin/python -m pytest

@@ -204,7 +204,7 @@ def build_graph():
     g.add_edge("answer", "check_citations")
     g.add_conditional_edges("check_citations", after_check, {END: END, "rewrite": "rewrite", "no_rule": "no_rule"})
     g.add_edge("no_rule", END)
-    return g.compile()
+    return g.compile(checkpointer=False)  # run as a worker inside the supervisor, never saved on its own
 
 
 _GRAPH = None

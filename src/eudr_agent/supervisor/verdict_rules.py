@@ -14,5 +14,5 @@ from __future__ import annotations
 from eudr_agent.state import CaseFile, Verdict
 
 
-def decide(case: CaseFile) -> Verdict:
+def decide(case: CaseFile) -> Verdict | None:
     raise NotImplementedError

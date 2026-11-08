@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "langgraph>=1.0",
+    "langgraph-checkpoint-sqlite>=3.0",
     "rank-bm25>=0.2.2",
     "chromadb>=1.0",
     "earthengine-api>=1.0",
@@ -19,6 +20,8 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
+# Shared case storage for a deployment: set DATABASE_URL to use it instead of SQLite.
+postgres = ["langgraph-checkpoint-postgres>=3.0", "psycopg[binary]>=3.2", "psycopg-pool>=3.2"]
 # Added when the Whisp baseline is built:
 geo = ["openforis-whisp", "geopandas"]
 
