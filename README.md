@@ -1,8 +1,5 @@
 # EUDR Evidence Agent for Karnataka Coffee
 
-Agentic AI (26CD7PEAAI) mini-project, CSE (Data Science), BMSCE.
-Team: Chinmayee S B (lead), Taran T, Alvin S T.
-
 The agent answers one question for a coffee exporter's compliance officer:
 **"Can coffee from this plot go into an EU-bound lot, and if not, what evidence is missing?"**
 It combines satellite checks with the EU Deforestation Regulation (EUDR) text and returns
