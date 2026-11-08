@@ -12,3 +12,14 @@
 {"id": "q12", "question": "Does tree loss in the Hansen dataset prove deforestation?", "expected": ["Note: Hansen Global Forest Change loss is not deforestation"]}
 {"id": "q13", "question": "What is the speed limit for trucks in Bangalore?", "expected": [], "out_of_scope": true}
 {"id": "q14", "question": "How do I bake sourdough bread at home?", "expected": [], "out_of_scope": true}
+{"id": "s01", "set": "supervisor", "point": "A", "question": "Does the EUDR agricultural-use exclusion mean coffee cultivated under shade trees is not forest?", "expected": ["EUDR Art. 2(4)", "EUDR Art. 2(6)", "EC Guidance §11.4(d)", "EC Guidance §11.4(b)"]}
+{"id": "s02", "set": "supervisor", "point": "A", "question": "Under the EUDR, can land recorded as coffee under shade trees since 1998 still be forest when forest maps show tree cover?", "expected": ["EUDR Art. 2(4)", "EUDR Art. 2(6)", "EC Guidance §11.4(d)", "EC Guidance §11.4(b)"]}
+{"id": "s03", "set": "supervisor", "point": "B", "question": "Does tree-cover loss within an existing coffee plantation constitute deforestation under the EUDR?", "expected": ["EUDR Art. 2(3)", "EUDR Art. 2(6)", "EC FAQ Q4.11"]}
+{"id": "s04", "set": "supervisor", "point": "B", "question": "Does forest degradation after 31 December 2020 make coffee non-compliant, or does that rule apply only to wood?", "expected": ["EUDR Art. 2(13)"]}
+{"id": "s05", "set": "supervisor", "point": "B", "question": "If a forest is damaged by fire or a storm and then regrows, is that deforestation?", "expected": ["EC FAQ Q4.12", "EUDR Art. 2(3)"]}
+{"id": "s06", "set": "supervisor", "point": "D", "question": "How can the geolocation of a plot be checked against satellite images or forest cover maps?", "expected": ["EC FAQ Q1.19", "EUDR Art. 18(2)"]}
+{"id": "s07", "set": "supervisor", "point": "D", "question": "What counts as a plot of land when a coffee estate has several parts?", "expected": ["EUDR Art. 2(27)", "EC FAQ Q4.2", "EC FAQ Q1.15"]}
+{"id": "s08", "set": "supervisor", "point": "C", "question": "What does the EUDR require when a coffee plot is located in a designated reserve forest or protected area?", "expected": ["EUDR Art. 3", "EUDR Art. 2(40)", "EC Guidance §6(a)"]}
+{"id": "s09", "set": "supervisor", "point": "C", "question": "Which laws of the country of production count as relevant legislation for the legality requirement?", "expected": ["EUDR Art. 2(40)", "EC Guidance §6(a)"]}
+{"id": "s10", "set": "supervisor", "point": "C", "question": "Is clearing land or forming a plantation allowed inside a reserved forest in Karnataka?", "expected": ["Karnataka Forest Act s.6", "Karnataka Forest Act s.24"]}
+{"id": "s11", "set": "supervisor", "question": "Which fertiliser gives the best coffee yield?", "expected": [], "out_of_scope": true}

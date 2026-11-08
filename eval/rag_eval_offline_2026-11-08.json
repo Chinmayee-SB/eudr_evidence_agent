@@ -1,0 +1,403 @@
+[
+  {
+    "id": "q01",
+    "set": "original",
+    "question": "Is shade-grown coffee under trees counted as forest?",
+    "status": "answered",
+    "citations": [
+      "EC Guidance §11.4(d) (part 1)"
+    ],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q02",
+    "set": "original",
+    "question": "What is the legal definition of forest?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(20)",
+      "EUDR Art. 2(4)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q03",
+    "set": "original",
+    "question": "What does deforestation mean in this regulation?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(3)",
+      "EUDR Art. 2(13)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q04",
+    "set": "original",
+    "question": "What is the cut-off date for deforestation-free products?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(13)",
+      "EUDR Recital 46"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q05",
+    "set": "original",
+    "question": "What is forest degradation?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(7)",
+      "EC FAQ Q4.5 (part 2)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q06",
+    "set": "original",
+    "question": "When is a polygon needed for the geolocation of a plot?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(28)",
+      "EUDR Art. 4a(5)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q07",
+    "set": "original",
+    "question": "From what date does the EUDR apply?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 38(2)",
+      "EUDR Art. 1(2)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q08",
+    "set": "original",
+    "question": "When does the regulation apply to micro and small undertakings?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 38(3)",
+      "EUDR Art. 2(30)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q09",
+    "set": "original",
+    "question": "What information and geolocation must operators collect?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 9(1)",
+      "EUDR Art. 9(2)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q10",
+    "set": "original",
+    "question": "Can competent authorities use satellite imagery in their checks?",
+    "status": "answered",
+    "citations": [
+      "EC FAQ Q5.18",
+      "EC Guidance §6(b) (part 6)"
+    ],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q11",
+    "set": "original",
+    "question": "Is coffee one of the relevant commodities?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(1)",
+      "EUDR Recital 38"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q12",
+    "set": "original",
+    "question": "Does tree loss in the Hansen dataset prove deforestation?",
+    "status": "answered",
+    "citations": [
+      "Note: Hansen Global Forest Change loss is not deforestation",
+      "EUDR Recital 16"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "q13",
+    "set": "original",
+    "question": "What is the speed limit for trucks in Bangalore?",
+    "status": "no_rule_found",
+    "citations": [],
+    "hit": null,
+    "cite_ok": null,
+    "legal_cited": null,
+    "guidance_cited": null,
+    "abstain_ok": true,
+    "steps": 9,
+    "rewrites": 2
+  },
+  {
+    "id": "q14",
+    "set": "original",
+    "question": "How do I bake sourdough bread at home?",
+    "status": "no_rule_found",
+    "citations": [],
+    "hit": null,
+    "cite_ok": null,
+    "legal_cited": null,
+    "guidance_cited": null,
+    "abstain_ok": true,
+    "steps": 9,
+    "rewrites": 2
+  },
+  {
+    "id": "s01",
+    "set": "supervisor",
+    "question": "Does the EUDR agricultural-use exclusion mean coffee cultivated under shade trees is not forest?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(4)",
+      "EUDR Art. 2(12)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": false,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "s02",
+    "set": "supervisor",
+    "question": "Under the EUDR, can land recorded as coffee under shade trees since 1998 still be forest when forest maps show tree cover?",
+    "status": "no_rule_found",
+    "citations": [],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": false,
+    "guidance_cited": false,
+    "abstain_ok": false,
+    "steps": 9,
+    "rewrites": 2
+  },
+  {
+    "id": "s03",
+    "set": "supervisor",
+    "question": "Does tree-cover loss within an existing coffee plantation constitute deforestation under the EUDR?",
+    "status": "answered",
+    "citations": [
+      "EC FAQ Q9.10.1 (part 1)",
+      "EC FAQ Q4.14"
+    ],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "s04",
+    "set": "supervisor",
+    "question": "Does forest degradation after 31 December 2020 make coffee non-compliant, or does that rule apply only to wood?",
+    "status": "answered",
+    "citations": [
+      "EC FAQ Q4.5 (part 1)"
+    ],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 7,
+    "rewrites": 1
+  },
+  {
+    "id": "s05",
+    "set": "supervisor",
+    "question": "If a forest is damaged by fire or a storm and then regrows, is that deforestation?",
+    "status": "answered",
+    "citations": [
+      "EC FAQ Q4.7",
+      "Note: Hansen Global Forest Change loss is not deforestation"
+    ],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "s06",
+    "set": "supervisor",
+    "question": "How can the geolocation of a plot be checked against satellite images or forest cover maps?",
+    "status": "answered",
+    "citations": [
+      "EC FAQ Q1.19"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "s07",
+    "set": "supervisor",
+    "question": "What counts as a plot of land when a coffee estate has several parts?",
+    "status": "no_rule_found",
+    "citations": [],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": false,
+    "guidance_cited": false,
+    "abstain_ok": false,
+    "steps": 9,
+    "rewrites": 2
+  },
+  {
+    "id": "s08",
+    "set": "supervisor",
+    "question": "What does the EUDR require when a coffee plot is located in a designated reserve forest or protected area?",
+    "status": "no_rule_found",
+    "citations": [],
+    "hit": false,
+    "cite_ok": false,
+    "legal_cited": false,
+    "guidance_cited": false,
+    "abstain_ok": false,
+    "steps": 9,
+    "rewrites": 2
+  },
+  {
+    "id": "s09",
+    "set": "supervisor",
+    "question": "Which laws of the country of production count as relevant legislation for the legality requirement?",
+    "status": "answered",
+    "citations": [
+      "EUDR Art. 2(40)",
+      "EC Guidance §6(a) (part 1)"
+    ],
+    "hit": true,
+    "cite_ok": true,
+    "legal_cited": true,
+    "guidance_cited": true,
+    "abstain_ok": true,
+    "steps": 4,
+    "rewrites": 0
+  },
+  {
+    "id": "s10",
+    "set": "supervisor",
+    "question": "Is clearing land or forming a plantation allowed inside a reserved forest in Karnataka?",
+    "status": "no_rule_found",
+    "citations": [],
+    "hit": true,
+    "cite_ok": false,
+    "legal_cited": false,
+    "guidance_cited": false,
+    "abstain_ok": false,
+    "steps": 9,
+    "rewrites": 2
+  },
+  {
+    "id": "s11",
+    "set": "supervisor",
+    "question": "Which fertiliser gives the best coffee yield?",
+    "status": "no_rule_found",
+    "citations": [],
+    "hit": null,
+    "cite_ok": null,
+    "legal_cited": null,
+    "guidance_cited": null,
+    "abstain_ok": true,
+    "steps": 9,
+    "rewrites": 2
+  }
+]

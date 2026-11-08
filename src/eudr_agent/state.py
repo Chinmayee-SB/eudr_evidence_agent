@@ -33,6 +33,8 @@ class Decision(TypedDict, total=False):
     reason: str
     task: str                    # send_back: what the geo-analyst should look at
     questions: list[str]         # ask_rules: what the rules agent should answer
+    points: list[str]            # ask_rules: the legal point (A-D, see supervisor/decide.py) of each question
+    evidence_seen: int           # ask_rules: findings on the case when the round was asked
     source: Literal["llm", "code"]
     overruled: str               # set when code replaced the LLM's proposal, saying why
 
@@ -54,7 +56,7 @@ class CaseFile(TypedDict, total=False):
     review: dict[str, Any]       # latest code review: gaps, conflicts, not_checkable
     decisions: list[Decision]    # every supervisor decision, with its reason
     pending_questions: list[str]
-    rules: list[dict[str, Any]]  # rules-agent answers: question, answer, citations, status
+    rules: list[dict[str, Any]]  # rules-agent answers: question, point, answer, citations, sources, status
     steps: int                   # agent calls and supervisor decisions so far (budget: MAX_STEPS)
     send_backs: int
     reruns: int                  # officer "documents added" re-runs

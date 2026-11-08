@@ -33,14 +33,16 @@ def build_vector_index(chunks: list[Chunk]) -> int:
     for start in range(0, len(chunks), BATCH_SIZE):
         batch = chunks[start:start + BATCH_SIZE]
         collection.add(ids=[c.id for c in batch],
-                       documents=[f"{c.ref} {c.title} {c.text}" for c in batch])
+                       documents=[f"{c.ref} {c.title} {c.text}" for c in batch],
+                       metadatas=[{"kind": c.kind} for c in batch])
     return collection.count()
 
 
-def search(query: str, k: int) -> list[str]:
-    """Return the ids of the k chunks closest in meaning to the query, best first."""
+def search(query: str, k: int, kinds: set[str] | None = None) -> list[str]:
+    """Return the ids of the k chunks closest in meaning to the query, best first, optionally of some kinds only."""
     try:
         collection = _client().get_collection(COLLECTION)
     except Exception as e:
         raise FileNotFoundError("No vector index yet. Run: python scripts/build_index.py") from e
-    return collection.query(query_texts=[query], n_results=k, include=[])["ids"][0]
+    where = {"kind": {"$in": sorted(kinds)}} if kinds else None
+    return collection.query(query_texts=[query], n_results=k, where=where, include=[])["ids"][0]

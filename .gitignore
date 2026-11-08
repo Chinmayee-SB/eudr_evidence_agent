@@ -13,3 +13,6 @@ Coffee_Estate_Workspace/
 *.kml
 # uploaded documents stay on this machine
 data/plots/documents/uploads/
+
+# rules-agent answer cache: keyed to the code and texts, so it is rebuilt on any change (see rag/cache.py)
+data/cache/rules/

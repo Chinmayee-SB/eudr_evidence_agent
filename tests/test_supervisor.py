@@ -133,11 +133,35 @@ def test_second_send_back_is_refused():
     assert d["action"] != "send_back" and "no send-back left" in d["overruled"]
 
 
-def test_rule_questions_are_deduplicated_and_capped():
-    asked = [{"question": "Q1", "status": "answered"}]
-    d = decide_mod.enforce({"action": "ask_rules", "questions": ["q1", "Q2", "Q2", "Q3", "Q4"]},
-                           *case_for("K-01", rules=asked))
-    assert d["source"] == "llm" and d["questions"] == ["Q2", "Q3"]
+def q(point, text):
+    return {"point": point, "question": text}
+
+
+def test_rule_questions_one_per_legal_point_and_capped():
+    asked = [{"question": "Q1", "point": "A", "status": "answered"}]
+    proposal = {"action": "ask_rules", "questions": [q("A", "q1 again"), q("B", "Q2"), q("B", "Q2 reworded"),
+                                                     q("C", "Q3"), q("D", "Q4"), "untagged", q("Z", "Q5")]}
+    d = decide_mod.enforce(proposal, *case_for("K-01", rules=asked))
+    assert d["source"] == "llm" and d["questions"] == ["Q2", "Q3"] and d["points"] == ["B", "C"]
+
+
+def test_second_rules_round_needs_new_evidence():
+    case, review = case_for("K-01", rules=[{"question": "Q1", "point": "A", "status": "answered"}])
+    case["decisions"] = [{"action": "ask_rules", "evidence_seen": len(case["findings"])}]
+    d = decide_mod.enforce({"action": "ask_rules", "questions": [q("B", "Q2")]}, case, review)
+    assert d["source"] == "code" and "no new evidence" in d["overruled"] and d["action"] != "ask_rules"
+    case["decisions"][0]["evidence_seen"] -= 1  # one finding has come in since
+    assert decide_mod.enforce({"action": "ask_rules", "questions": [q("B", "Q2")]}, case, review)["action"] == "ask_rules"
+
+
+def test_code_decision_asks_each_point_once_and_the_protected_point():
+    d = decide_mod.decide(*case_for("C-02"))
+    assert d["points"] == ["A", "B"] and d["evidence_seen"] == len(case_for("C-02")[0]["findings"])
+    plot = load_plots()["N-01"]
+    case = {"guardrail": check_input(plot), "findings": [tools.protected_area_check(plot["geometry"])],
+            "rules": [], "steps": 2, "send_backs": 0}
+    d = decide_mod.decide(case, review_evidence(plot, case["findings"]))
+    assert d["action"] == "ask_rules" and d["points"] == ["C"]
 
 
 def test_unknown_action_and_spent_steps_fall_back_to_code():

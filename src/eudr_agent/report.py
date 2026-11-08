@@ -188,8 +188,10 @@ def _rules_section(checks: list[dict[str, Any]]) -> list[Any]:
     if not checks:
         return [*story, _para("No rule checks were run on this plot.")]
     for check in checks:
+        # each citation with its weight: binding law, a recital, non-binding guidance, Indian law or our own note
+        cited = [f"{s['ref']} ({s['label']})" for s in check.get("sources", [])] or check.get("citations", [])
         story += [_para(check["question"], LABEL), _para(check.get("answer") or check.get("error", "")),
-                  _para(f"Citations: {', '.join(check.get('citations', [])) or 'none'}", SMALL), Spacer(1, 7)]
+                  _para(f"Citations: {'; '.join(cited) or 'none'}", SMALL), Spacer(1, 7)]
     return story
 
 

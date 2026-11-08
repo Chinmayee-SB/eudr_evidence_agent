@@ -19,6 +19,7 @@ import sys
 
 from eudr_agent import documents
 from eudr_agent.plots import load_plots
+from eudr_agent.rag.chunk import KINDS_SHORT
 from eudr_agent.state import CaseFile
 from eudr_agent.supervisor.checkpoints import open_checkpointer
 from eudr_agent.supervisor.graph import build_graph, get_case, resume_case, start_case
@@ -38,7 +39,9 @@ def print_case(case: CaseFile) -> None:
         if d.get("overruled"):
             print(f"      (overruled: {d['overruled']})")
     for r in case.get("rules", []):
-        print(f"  rule: {r['question']} -> {r['status']} {r.get('citations', [])}")
+        cited = [f"{s['ref']} [{KINDS_SHORT.get(s['kind'], s['kind'])}]" for s in r.get("sources", [])]
+        print(f"  rule ({r.get('point') or '-'}): {r['question']} -> {r['status']}")
+        print(f"      cites: {'; '.join(cited or r.get('citations', [])) or 'none'}")
     print(f"  draft verdict: {case.get('draft_verdict') or '-'} ({case.get('verdict_note', '')})")
     for item in case.get("open_items", []):
         print(f"  open: {item}")

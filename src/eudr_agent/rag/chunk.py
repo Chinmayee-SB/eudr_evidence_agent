@@ -5,7 +5,10 @@ One chunk = one citable unit, so every answer can point to an exact place:
   - other articles are split per paragraph    -> "Art. 9(1)"
   - recitals are one chunk each               -> "Recital 38"
   - annexes are one chunk each                -> "Annex I"
-  - our own notes / manually added PDFs       -> "Note: ..." / "<file> p.3"
+  - our own notes                             -> "Note: ..."
+  - hand-added PDFs, along their headings     -> "EC FAQ Q4.10", "Karnataka Forest Act s.24" (see pdf_split.py)
+
+Every chunk also has a `kind`, so an answer can show how much weight each citation carries (see KINDS).
 """
 
 from __future__ import annotations
@@ -17,7 +20,20 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from eudr_agent.config import CHUNKS_PATH, MANUAL_DIR, NOTES_DIR, RAW_DIR
+from eudr_agent.rag import pdf_split
 from eudr_agent.rag.fetch import SOURCES, source_url
+
+# Source types, and how each is shown next to a citation.
+KINDS = {
+    "law": "EU law (binding)",
+    "recital": "EU recital (explains the law; not binding on its own)",
+    "guidance": "Commission guidance (not legally binding)",
+    "national_law": "Indian law (country of production)",
+    "note": "our dataset note (not a legal source)",
+}
+KINDS_SHORT = {"law": "binding", "recital": "recital", "guidance": "guidance, not binding",
+               "national_law": "Indian law", "note": "our note"}
+LEGAL_KINDS = {"law", "recital", "guidance", "national_law"}  # an answer must rest on at least one of these
 
 
 @dataclass
@@ -28,6 +44,7 @@ class Chunk:
     text: str
     source: str
     url: str
+    kind: str = "law"  # one of KINDS
 
 
 _PAR = "\u0000PAR{}\u0000"
@@ -93,11 +110,11 @@ def _recitals(page: str, key: str, label: str, src_title: str, url: str) -> list
     page = page.partition("HAVE ADOPTED THIS REGULATION")[0]  # otherwise the last recital runs to the end
     for num, frag in _sections(page, "rct"):
         text = re.sub(r"^\(\d+\)\s*", "", _clean(frag))
-        chunks.append(Chunk(f"{key}:rct{num}", f"{label} Recital {num}", "Recital", text, src_title, url))
+        chunks.append(Chunk(f"{key}:rct{num}", f"{label} Recital {num}", "Recital", text, src_title, url, "recital"))
     return chunks
 
 
-def _markdown(path: Path, ref_prefix: str) -> list[Chunk]:
+def _markdown(path: Path, ref_prefix: str, kind: str) -> list[Chunk]:
     chunks = []
     for block in re.split(r"\n(?=## )", path.read_text(encoding="utf-8")):
         lines = block.strip().splitlines()
@@ -106,18 +123,24 @@ def _markdown(path: Path, ref_prefix: str) -> list[Chunk]:
         heading = lines[0][3:].strip()
         body = " ".join(line.strip() for line in lines[1:] if line.strip())
         cid = f"{path.stem}:{re.sub(r'[^a-z0-9]+', '-', heading.lower()).strip('-')}"
-        chunks.append(Chunk(cid, f"{ref_prefix}: {heading}", heading, body, path.name, ""))
+        chunks.append(Chunk(cid, f"{ref_prefix}: {heading}", heading, body, path.name, "", kind))
     return chunks
 
 
 def _pdf(path: Path) -> list[Chunk]:
-    from pypdf import PdfReader
-
+    """A known document is split along its headings; any other PDF per page. Long sections become parts."""
+    doc = pdf_split.MANUAL_DOCS.get(path.stem)
+    found = pdf_split.sections(path, doc) if doc else pdf_split.pages(path)
+    kind = doc.kind if doc else "guidance"
     chunks = []
-    for i, page in enumerate(PdfReader(str(path)).pages, start=1):
-        text = re.sub(r"\s+", " ", page.extract_text() or "").strip()
-        if len(text) > 80:
-            chunks.append(Chunk(f"{path.stem}:p{i}", f"{path.stem} p.{i}", path.stem, text, path.name, ""))
+    for section in found:
+        parts = pdf_split.split_long(re.sub(r"\s+", " ", " ".join(section.lines)).strip())
+        for n, text in enumerate(parts, start=1):
+            if len(text) < 80:  # a deleted question or a stray heading
+                continue
+            ref = section.ref + (f" (part {n})" if len(parts) > 1 else "")
+            cid = f"{path.stem}:{re.sub(r'[^A-Za-z0-9.]+', '-', ref)}"
+            chunks.append(Chunk(cid, ref, section.title, text, path.name, f"{path.name}#page={section.page}", kind))
     return chunks
 
 
@@ -133,12 +156,12 @@ def build_chunks() -> list[Chunk]:
     chunks += _recitals(read(amend.key), "amend2025", "Reg. 2025/2650", amend.title, source_url(amend))
 
     for md in sorted(NOTES_DIR.glob("*.md")):
-        chunks += _markdown(md, "Note")
+        chunks += _markdown(md, "Note", "note")
     for f in sorted(MANUAL_DIR.glob("*")):
         if f.suffix.lower() == ".pdf":
             chunks += _pdf(f)
         elif f.suffix.lower() in {".md", ".txt"} and f.name.lower() != "readme.md":
-            chunks += _markdown(f, f.stem)
+            chunks += _markdown(f, f.stem, "guidance")
     return chunks
 
 

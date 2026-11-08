@@ -3,6 +3,14 @@
 BM25 is strong on exact legal terms ("geolocation"). Vector search is strong on paraphrases
 ("legal definition of forest"). Hybrid merges the two rankings with Reciprocal Rank Fusion.
 RAG_RETRIEVAL picks the mode, so the three can be compared on the same questions.
+
+The regulation and the supporting documents (Commission guidance, Indian law) are searched as two shelves.
+The supporting documents are far longer, so in one shared ranking they push the binding articles out of the
+top results. Each shelf gets its own places instead: k from the regulation, SUPPORT_K from the rest.
+
+With the reranker on (rerank.py, the default), both shelves offer more candidates and a cross-encoder orders
+them all together, so a Commission FAQ answer can rank above a loosely related article. The binding law keeps
+MIN_REGULATION of the places. If the reranker cannot run, the shelf order above is used.
 """
 
 from __future__ import annotations
@@ -14,7 +22,7 @@ from functools import lru_cache
 from rank_bm25 import BM25Okapi
 
 from eudr_agent.config import settings
-from eudr_agent.rag import vector
+from eudr_agent.rag import rerank, vector
 from eudr_agent.rag.chunk import Chunk, load_chunks
 
 STOPWORDS = set(
@@ -26,15 +34,28 @@ STOPWORDS = set(
 
 RRF_K = 60        # standard constant: stops the top rank or two from dominating the merged score
 CANDIDATES = 20   # how many passages each retriever offers to the merge
+SUPPORT_K = 3     # places for Commission guidance and Indian law, on top of k from the regulation
+TOP_EACH = 2      # each retriever's best passages that always get a place, before the merged ranking fills the rest
+SHELVES = {"regulation": {"law", "recital", "note"}, "supporting": {"guidance", "national_law"}}
+RERANK = True          # the evaluation switches this off to compare
+RERANK_POOL = {"regulation": 12, "supporting": 8}  # candidates each shelf offers the reranker
+MIN_REGULATION = 3     # places kept for the regulation shelf after reranking
+RERANK_MODE = "keep_winners"  # replace | fuse | keep_winners (see search)
 
 
 def _stem(word: str) -> str:
-    """Very light stemming so 'trees'/'tree' and 'applies'/'apply' match."""
-    for suffix, repl in (("ies", "y"), ("ing", ""), ("ed", "")):
+    """Light stemming, in steps, so 'clearings'/'clearing'/'clear', 'reserved'/'reserve' and 'applies'/'apply'
+    meet: plural first, then -ing/-ed, then a final -e."""
+    if word.endswith("ies") and len(word) > 4:
+        word = word[:-3] + "y"
+    elif word.endswith("s") and not word.endswith(("ss", "us", "is")) and len(word) > 3:
+        word = word[:-1]
+    for suffix in ("ing", "ed"):
         if word.endswith(suffix) and len(word) - len(suffix) >= 3:
-            return word[: -len(suffix)] + repl
-    if word.endswith("s") and not word.endswith(("ss", "us", "is")) and len(word) > 3:
-        return word[:-1]
+            word = word[: -len(suffix)]
+            break
+    if word.endswith("e") and len(word) > 4:
+        word = word[:-1]
     return word
 
 
@@ -70,20 +91,71 @@ class Index:
     def __init__(self, chunks: list[Chunk]):
         self.by_id = {c.id: c for c in chunks}
         self.chunk_ids = [c.id for c in chunks]
+        self.kinds = [c.kind for c in chunks]
+        self.rerank_note = ""  # why the last search was not reranked, if it was not
         self._bm25 = BM25Okapi([tokenize(c.ref + " " + c.title + " " + c.text) for c in chunks])
 
-    def _bm25_ids(self, query: str, k: int) -> list[str]:
+    def _bm25_ids(self, query: str, k: int, kinds: set[str]) -> list[str]:
         scores = self._bm25.get_scores(tokenize(query))
-        ranked = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
+        ranked = sorted((i for i in range(len(scores)) if self.kinds[i] in kinds),
+                        key=lambda i: scores[i], reverse=True)[:k]
         return [self.chunk_ids[i] for i in ranked if scores[i] > 0]
 
-    def search(self, query: str, k: int = 5) -> list[Hit]:
+    def _winners(self, query: str) -> list[str]:
+        """Each retriever's top passages on the regulation shelf, the ones the plain search always keeps."""
+        ids = []
+        if settings.retrieval in ("hybrid", "bm25"):
+            ids += self._bm25_ids(query, TOP_EACH, SHELVES["regulation"])
+        if settings.retrieval in ("hybrid", "vector"):
+            ids += vector.search(query, TOP_EACH, SHELVES["regulation"])
+        return list(dict.fromkeys(ids))
+
+    def _shelf(self, query: str, k: int, kinds: set[str]) -> list[Hit]:
         rankings: dict[str, list[str]] = {}
         if settings.retrieval in ("hybrid", "bm25"):
-            rankings["bm25"] = self._bm25_ids(query, CANDIDATES)
+            rankings["bm25"] = self._bm25_ids(query, CANDIDATES, kinds)
         if settings.retrieval in ("hybrid", "vector"):
-            rankings["vector"] = vector.search(query, CANDIDATES)
-        return [Hit(self.by_id[i], score, names) for i, score, names in rrf_merge(rankings, k)]
+            rankings["vector"] = vector.search(query, CANDIDATES, kinds)
+        merged = rrf_merge(rankings, len(self.chunk_ids))
+        # A passage one retriever ranks first but the other misses scores low in the merge, so it can drop out
+        # behind passages both rank middling. Each retriever's top passages keep a place.
+        firsts = list(dict.fromkeys(i for ids in rankings.values() for i in ids[:TOP_EACH]))
+        rest = [i for i, _, _ in merged if i not in firsts]
+        by_id = {i: (score, names) for i, score, names in merged}
+        return [Hit(self.by_id[i], *by_id[i]) for i in (firsts + rest)[:k]]
+
+    def _shelves(self, query: str, sizes: dict[str, int]) -> list[Hit]:
+        hits = self._shelf(query, sizes["regulation"], SHELVES["regulation"])
+        if any(kind in SHELVES["supporting"] for kind in self.kinds):
+            hits += self._shelf(query, sizes["supporting"], SHELVES["supporting"])
+        return hits
+
+    def search(self, query: str, k: int = 5) -> list[Hit]:
+        """k + SUPPORT_K passages: reranked across both shelves, or k from the regulation then SUPPORT_K more."""
+        self.rerank_note = ""
+        if not (RERANK and rerank.enabled()):
+            return self._shelves(query, {"regulation": k, "supporting": SUPPORT_K})
+        candidates = self._shelves(query, RERANK_POOL)
+        try:
+            scores = rerank.scores(query, [f"{h.chunk.ref} {h.chunk.title}: {h.chunk.text}" for h in candidates])
+        except Exception as error:  # no model (e.g. offline on first run): keep the shelf order
+            self.rerank_note = f"not reranked ({type(error).__name__}: {str(error)[:80]})"
+            return self._shelves(query, {"regulation": k, "supporting": SUPPORT_K})
+        ranked = [Hit(h.chunk, s, [*h.found_by, "rerank"])
+                  for s, h in sorted(zip(scores, candidates), key=lambda x: x[0], reverse=True)]
+        total = k + SUPPORT_K
+        if RERANK_MODE == "fuse":  # merge the reranker's order with the first-stage order, by rank
+            first = {h.chunk.id: i for i, h in enumerate(candidates, 1)}
+            fused = {h.chunk.id: 1 / (RRF_K + i) + 1 / (RRF_K + first[h.chunk.id]) for i, h in enumerate(ranked, 1)}
+            ranked = sorted(ranked, key=lambda h: fused[h.chunk.id], reverse=True)
+        keep: list[Hit] = []
+        if RERANK_MODE == "keep_winners":  # the first stage's clear winners keep their places
+            winners = set(self._winners(query))
+            keep = [h for h in ranked if h.chunk.id in winners]
+        regulation = [h for h in ranked if h.chunk.kind in SHELVES["regulation"] and h not in keep]
+        keep += regulation[:max(MIN_REGULATION - len(keep), 0)]
+        picked = keep + [h for h in ranked if h not in keep][:max(total - len(keep), 0)]
+        return sorted(picked, key=lambda h: ranked.index(h))
 
 
 @lru_cache(maxsize=1)

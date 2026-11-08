@@ -1,0 +1,1589 @@
+{
+  "questions": 37,
+  "retrieval": [
+    {
+      "variant": "rerank: keep winners",
+      "set": "original",
+      "n": 12,
+      "hit": 1.0,
+      "recall": 0.9166666666666666,
+      "mrr": 0.7083333333333334,
+      "ndcg": 0.7276859032508957
+    },
+    {
+      "variant": "rerank: keep winners",
+      "set": "supervisor",
+      "n": 10,
+      "hit": 0.9,
+      "recall": 0.6833333333333333,
+      "mrr": 0.5426190476190477,
+      "ndcg": 0.48843516882168164
+    },
+    {
+      "variant": "rerank: keep winners",
+      "set": "held-out",
+      "n": 10,
+      "hit": 1.0,
+      "recall": 0.95,
+      "mrr": 0.29999999999999993,
+      "ndcg": 0.4565294113455428
+    },
+    {
+      "variant": "rerank: fuse",
+      "set": "original",
+      "n": 12,
+      "hit": 1.0,
+      "recall": 0.9166666666666666,
+      "mrr": 0.7083333333333334,
+      "ndcg": 0.7276859032508957
+    },
+    {
+      "variant": "rerank: fuse",
+      "set": "supervisor",
+      "n": 10,
+      "hit": 0.9,
+      "recall": 0.6833333333333333,
+      "mrr": 0.5426190476190477,
+      "ndcg": 0.48843516882168164
+    },
+    {
+      "variant": "rerank: fuse",
+      "set": "held-out",
+      "n": 10,
+      "hit": 1.0,
+      "recall": 0.95,
+      "mrr": 0.29999999999999993,
+      "ndcg": 0.4565294113455428
+    },
+    {
+      "variant": "rerank: replace",
+      "set": "original",
+      "n": 12,
+      "hit": 1.0,
+      "recall": 0.9166666666666666,
+      "mrr": 0.7083333333333334,
+      "ndcg": 0.7276859032508957
+    },
+    {
+      "variant": "rerank: replace",
+      "set": "supervisor",
+      "n": 10,
+      "hit": 0.9,
+      "recall": 0.6833333333333333,
+      "mrr": 0.5426190476190477,
+      "ndcg": 0.48843516882168164
+    },
+    {
+      "variant": "rerank: replace",
+      "set": "held-out",
+      "n": 10,
+      "hit": 1.0,
+      "recall": 0.95,
+      "mrr": 0.29999999999999993,
+      "ndcg": 0.4565294113455428
+    },
+    {
+      "variant": "hybrid, no reranker",
+      "set": "original",
+      "n": 12,
+      "hit": 1.0,
+      "recall": 0.9166666666666666,
+      "mrr": 0.7083333333333334,
+      "ndcg": 0.7276859032508957
+    },
+    {
+      "variant": "hybrid, no reranker",
+      "set": "supervisor",
+      "n": 10,
+      "hit": 0.9,
+      "recall": 0.6833333333333333,
+      "mrr": 0.5426190476190477,
+      "ndcg": 0.48843516882168164
+    },
+    {
+      "variant": "hybrid, no reranker",
+      "set": "held-out",
+      "n": 10,
+      "hit": 1.0,
+      "recall": 0.95,
+      "mrr": 0.29999999999999993,
+      "ndcg": 0.4565294113455428
+    },
+    {
+      "variant": "hybrid, plain merge",
+      "set": "original",
+      "n": 12,
+      "hit": 0.75,
+      "recall": 0.7083333333333334,
+      "mrr": 0.5861111111111111,
+      "ndcg": 0.6073206879574118
+    },
+    {
+      "variant": "hybrid, plain merge",
+      "set": "supervisor",
+      "n": 10,
+      "hit": 0.7,
+      "recall": 0.5,
+      "mrr": 0.3342857142857143,
+      "ndcg": 0.3220358208819961
+    },
+    {
+      "variant": "hybrid, plain merge",
+      "set": "held-out",
+      "n": 10,
+      "hit": 1.0,
+      "recall": 0.95,
+      "mrr": 0.4309523809523809,
+      "ndcg": 0.5357842670608479
+    },
+    {
+      "variant": "keyword only",
+      "set": "original",
+      "n": 12,
+      "hit": 0.75,
+      "recall": 0.6666666666666666,
+      "mrr": 0.625,
+      "ndcg": 0.5932569705204408
+    },
+    {
+      "variant": "keyword only",
+      "set": "supervisor",
+      "n": 10,
+      "hit": 0.8,
+      "recall": 0.625,
+      "mrr": 0.5142857142857143,
+      "ndcg": 0.472151365302953
+    },
+    {
+      "variant": "keyword only",
+      "set": "held-out",
+      "n": 10,
+      "hit": 1.0,
+      "recall": 0.9,
+      "mrr": 0.29999999999999993,
+      "ndcg": 0.4371867709838157
+    },
+    {
+      "variant": "meaning only",
+      "set": "original",
+      "n": 12,
+      "hit": 0.8333333333333334,
+      "recall": 0.75,
+      "mrr": 0.7291666666666666,
+      "ndcg": 0.690658391431314
+    },
+    {
+      "variant": "meaning only",
+      "set": "supervisor",
+      "n": 10,
+      "hit": 0.6,
+      "recall": 0.4,
+      "mrr": 0.3333333333333333,
+      "ndcg": 0.28194212624728643
+    },
+    {
+      "variant": "meaning only",
+      "set": "held-out",
+      "n": 10,
+      "hit": 0.9,
+      "recall": 0.8,
+      "mrr": 0.4333333333333334,
+      "ndcg": 0.4928226269367045
+    }
+  ],
+  "answers": [
+    {
+      "id": "q01",
+      "set": "original",
+      "question": "Is shade-grown coffee under trees counted as forest?",
+      "status": "answered",
+      "answer": "Generally, no. Under the EUDR definition, an “agricultural plantation” includes agroforestry systems “where crops are grown under tree cover,” and agricultural plantations are excluded from “forest.” [EUDR Art. 2(6)] Shade-grown coffee under trees would therefore generally fall outside the forest definition if it is an agricultural production system or agroforestry system [EUDR Art. 2(6)]. The Commission guidance likewise describes agroforestry as crops and trees growing together and states that such systems are agricultural use rather than forests [EC Guidance §11.4(d) (part 1)].\n\nHowever, the passages do not establish that every shade-grown coffee site automatically qualifies: the relevant facts—such as whether it is an agricultural production system—remain to be assessed. A forest replaced by an agricultural plantation may still constitute deforestation under the Regulation [EC FAQ Q4.14]. A forest-map overlap alone does not determine the legal classification [Note: JRC GFC2020 forest map and coffee].",
+      "citations": [
+        "EUDR Art. 2(6)",
+        "Note: JRC GFC2020 forest map and coffee",
+        "EC Guidance §11.4(d) (part 1)",
+        "EC FAQ Q4.14"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Generally, no.",
+          "verdict": "supported",
+          "why": "The passages describe agroforestry crops under tree cover as agricultural plantations excluded from forest."
+        },
+        {
+          "sentence": "Under the EUDR definition, an “agricultural plantation” includes agroforestry systems “where crops are grown under tree cover,” and agricultural plantations are excluded from “forest.” [EUDR Art. 2(6)] Shade-grown coffee under trees would therefore generally fall outside the forest definition if it is an agricultural production system or agroforestry system [EUDR Art. 2(6)].",
+          "verdict": "supported",
+          "why": "Article 2(6) expressly includes such agroforestry systems and excludes agricultural plantations from forest; the qualification is stated."
+        },
+        {
+          "sentence": "The Commission guidance likewise describes agroforestry as crops and trees growing together and states that such systems are agricultural use rather than forests [EC Guidance §11.4(d) (part 1)].",
+          "verdict": "supported",
+          "why": "The guidance describes crops and trees together and characterizes agroforestry as agricultural use rather than forest."
+        },
+        {
+          "sentence": "However, the passages do not establish that every shade-grown coffee site automatically qualifies: the relevant facts—such as whether it is an agricultural production system—remain to be assessed.",
+          "verdict": "supported",
+          "why": "The passages leave qualification dependent on whether the site fits an agricultural production or agroforestry system."
+        },
+        {
+          "sentence": "A forest replaced by an agricultural plantation may still constitute deforestation under the Regulation [EC FAQ Q4.14].",
+          "verdict": "supported",
+          "why": "The FAQ expressly states that replacing forest with a rubber plantation is deforestation; the same principle is stated for agricultural plantations."
+        },
+        {
+          "sentence": "A forest-map overlap alone does not determine the legal classification [Note: JRC GFC2020 forest map and coffee].",
+          "verdict": "supported",
+          "why": "The dataset note says map overlap alone does not mean non-compliance, supporting that it does not determine legal classification."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.7738475203514099,
+      "context_precision": 0.7392857142857142,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q02",
+      "set": "original",
+      "question": "What is the legal definition of forest?",
+      "status": "answered",
+      "answer": "Under the EUDR, “forest” means land spanning more than 0.5 hectares with trees higher than 5 metres and canopy cover exceeding 10%, or with trees able to reach those thresholds in situ. Land predominantly under agricultural or urban use is excluded [EUDR Art. 2(4)].",
+      "citations": [
+        "EUDR Art. 2(4)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Under the EUDR, “forest” means land spanning more than 0.5 hectares with trees higher than 5 metres and canopy cover exceeding 10%, or with trees able to reach those thresholds in situ.",
+          "verdict": "supported",
+          "why": "Matches the stated area, height, canopy, and in-situ threshold criteria."
+        },
+        {
+          "sentence": "Land predominantly under agricultural or urban use is excluded [EUDR Art. 2(4)].",
+          "verdict": "supported",
+          "why": "The passage expressly excludes land predominantly under agricultural or urban land use."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.650672972202301,
+      "context_precision": 0.3333333333333333,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q03",
+      "set": "original",
+      "question": "What does deforestation mean in this regulation?",
+      "status": "answered",
+      "answer": "In the EUDR, “deforestation” means “the conversion of forest to agricultural use, whether human-induced or not.” [EUDR Art. 2(3)] The definition therefore covers conversion caused by natural events as well as by people [EC FAQ Q4.12]. For example, forest affected by fire and subsequently converted into agricultural land is deforestation; if it is allowed to regenerate, it is not [EC FAQ Q4.12].\n\nThe conversion’s extent, legal registration, plot boundaries, or who or what caused it do not determine whether it is deforestation [EC Guidance §11.2 (part 1)]. However, conversion of forest to a land use that is not agricultural use does not fall within this definition [EC Guidance §11.2 (part 1)].",
+      "citations": [
+        "EUDR Art. 2(3)",
+        "EC FAQ Q4.12",
+        "EC Guidance §11.2 (part 1)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "In the EUDR, “deforestation” means “the conversion of forest to agricultural use, whether human-induced or not.” [EUDR Art. 2(3)] The definition therefore covers conversion caused by natural events as well as by people [EC FAQ Q4.12].",
+          "verdict": "supported",
+          "why": "Art. 2(3) states the definition; FAQ Q4.12 includes natural events."
+        },
+        {
+          "sentence": "For example, forest affected by fire and subsequently converted into agricultural land is deforestation; if it is allowed to regenerate, it is not [EC FAQ Q4.12].",
+          "verdict": "supported",
+          "why": "FAQ Q4.12 gives both the fire-then-agriculture and regeneration examples."
+        },
+        {
+          "sentence": "The conversion’s extent, legal registration, plot boundaries, or who or what caused it do not determine whether it is deforestation [EC Guidance §11.2 (part 1)].",
+          "verdict": "supported",
+          "why": "Guidance says extent, legal registration, plot boundaries, and origin are irrelevant."
+        },
+        {
+          "sentence": "However, conversion of forest to a land use that is not agricultural use does not fall within this definition [EC Guidance §11.2 (part 1)].",
+          "verdict": "supported",
+          "why": "Guidance expressly excludes conversion to non-agricultural land uses."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.6928377151489258,
+      "context_precision": 0.5654761904761905,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q04",
+      "set": "original",
+      "question": "What is the cut-off date for deforestation-free products?",
+      "status": "answered",
+      "answer": "The cut-off date is 31 December 2020. Products are “deforestation-free” only if the relevant commodities were produced on land not subject to deforestation after that date. For wood-containing products, the wood must also have been harvested without inducing forest degradation after 31 December 2020 [EUDR Art. 2(13)]. The Commission’s guidance confirms that compliance checks look back to determine whether the cropland was previously forest since this cut-off date [EC FAQ Q5.12]. The rule therefore leaves open the factual assessment of whether deforestation or forest degradation occurred after 31 December 2020 [EUDR Art. 2(13)].",
+      "citations": [
+        "EUDR Art. 2(13)",
+        "EC FAQ Q5.12"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "The cut-off date is 31 December 2020.",
+          "verdict": "supported",
+          "why": "Article 2(13) and Recital 46 state 31 December 2020."
+        },
+        {
+          "sentence": "Products are “deforestation-free” only if the relevant commodities were produced on land not subject to deforestation after that date.",
+          "verdict": "supported",
+          "why": "Article 2(13)(a) states this condition directly."
+        },
+        {
+          "sentence": "For wood-containing products, the wood must also have been harvested without inducing forest degradation after 31 December 2020 [EUDR Art. 2(13)].",
+          "verdict": "supported",
+          "why": "Article 2(13)(b) states the additional wood condition."
+        },
+        {
+          "sentence": "The Commission’s guidance confirms that compliance checks look back to determine whether the cropland was previously forest since this cut-off date [EC FAQ Q5.12].",
+          "verdict": "supported",
+          "why": "FAQ Q5.12 describes looking back since the cut-off date."
+        },
+        {
+          "sentence": "The rule therefore leaves open the factual assessment of whether deforestation or forest degradation occurred after 31 December 2020 [EUDR Art. 2(13)].",
+          "verdict": "supported",
+          "why": "The rule sets the date for evaluating whether deforestation or degradation occurred; factual occurrence remains to be assessed."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.6413676142692566,
+      "context_precision": 0.8551587301587301,
+      "citation_precision": 0.6666666666666666
+    },
+    {
+      "id": "q05",
+      "set": "original",
+      "question": "What is forest degradation?",
+      "status": "answered",
+      "answer": "“Forest degradation” means structural changes to forest cover involving conversion of:  \n\n- primary forests or naturally regenerating forests into plantation forests or other wooded land; or  \n- primary forests into planted forests [EUDR Art. 2(7)].\n\nFor wood products, the relevant question is whether harvesting activities after 31 December 2020 caused or may cause such a conversion, including through planned post-harvesting activities [EC FAQ Q4.6 (part 1)]. The harvesting must have a causal role: degradation caused by climate change, disease, or fires is outside this specific scope [EC FAQ Q4.5 (part 1)]. If a degraded forest later regenerates into a category not covered by the definition, future wood harvesting may be considered deforestation-free; if its degraded status persists, it may not be [EC FAQ Q4.5 (part 2)].",
+      "citations": [
+        "EUDR Art. 2(7)",
+        "EC FAQ Q4.5 (part 2)",
+        "EC FAQ Q4.6 (part 1)",
+        "EC FAQ Q4.5 (part 1)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "“Forest degradation” means structural changes to forest cover involving conversion of:  \n\n- primary forests or naturally regenerating forests into plantation forests or other wooded land; or  \n- primary forests into planted forests [EUDR Art. 2(7)].",
+          "verdict": "supported",
+          "why": "Directly restates EUDR Article 2(7)."
+        },
+        {
+          "sentence": "For wood products, the relevant question is whether harvesting activities after 31 December 2020 caused or may cause such a conversion, including through planned post-harvesting activities [EC FAQ Q4.6 (part 1)].",
+          "verdict": "supported",
+          "why": "FAQ Q4.6 says to assess harvesting and planned post-harvesting activities for conversions, with the relevant baseline including 31 December 2020."
+        },
+        {
+          "sentence": "The harvesting must have a causal role: degradation caused by climate change, disease, or fires is outside this specific scope [EC FAQ Q4.5 (part 1)].",
+          "verdict": "supported",
+          "why": "FAQ Q4.5 states harvesting must induce degradation and excludes climate change, disease, and fires."
+        },
+        {
+          "sentence": "If a degraded forest later regenerates into a category not covered by the definition, future wood harvesting may be considered deforestation-free; if its degraded status persists, it may not be [EC FAQ Q4.5 (part 2)].",
+          "verdict": "supported",
+          "why": "FAQ Q4.5 expressly contrasts persistent degradation with later regeneration into a category outside the definition."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.6948885917663574,
+      "context_precision": 0.5726190476190476,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q06",
+      "set": "original",
+      "question": "When is a polygon needed for the geolocation of a plot?",
+      "status": "answered",
+      "answer": "A polygon is needed when the plot is more than four hectares and is used to produce relevant commodities other than cattle. The polygon must contain sufficient latitude and longitude points to describe the plot’s perimeter [EUDR Art. 2(28)].\n\nFor plots below four hectares, one latitude-and-longitude point may be used instead [EC FAQ Q1.8]. For cattle, polygons are not required; single geolocation points are required for the relevant establishments [EC FAQ Q1.8]. A circumference around a central point is not an alternative to a polygon [EC FAQ Q1.16].\n\nFor micro or small primary operators, the specified geolocation may instead be replaced by the postal address of all plots or the relevant establishment, under the stated simplified regime [EUDR Art. 4a(5)].",
+      "citations": [
+        "EUDR Art. 2(28)",
+        "EUDR Art. 4a(5)",
+        "EC FAQ Q1.8",
+        "EC FAQ Q1.16"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "A polygon is needed when the plot is more than four hectares and is used to produce relevant commodities other than cattle.",
+          "verdict": "supported",
+          "why": "Article 2(28) requires polygons for plots over four hectares producing relevant commodities other than cattle."
+        },
+        {
+          "sentence": "The polygon must contain sufficient latitude and longitude points to describe the plot’s perimeter [EUDR Art. 2(28)].",
+          "verdict": "supported",
+          "why": "Article 2(28) specifies sufficient latitude and longitude points to describe each plot’s perimeter."
+        },
+        {
+          "sentence": "For plots below four hectares, one latitude-and-longitude point may be used instead [EC FAQ Q1.8].",
+          "verdict": "supported",
+          "why": "FAQ Q1.8 states that plots below four hectares can use one latitude and longitude point."
+        },
+        {
+          "sentence": "For cattle, polygons are not required; single geolocation points are required for the relevant establishments [EC FAQ Q1.8].",
+          "verdict": "supported",
+          "why": "FAQ Q1.8 says cattle require single points, including for establishments where cattle were held."
+        },
+        {
+          "sentence": "A circumference around a central point is not an alternative to a polygon [EC FAQ Q1.16].",
+          "verdict": "supported",
+          "why": "FAQ Q1.16 says circumference information is neither required nor permitted as an alternative."
+        },
+        {
+          "sentence": "For micro or small primary operators, the specified geolocation may instead be replaced by the postal address of all plots or the relevant establishment, under the stated simplified regime [EUDR Art. 4a(5)].",
+          "verdict": "supported",
+          "why": "Article 4a(5) provides this postal-address replacement for micro or small primary operators."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.4764029085636139,
+      "context_precision": 0.8551587301587301,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q07",
+      "set": "original",
+      "question": "From what date does the EUDR apply?",
+      "status": "answered",
+      "answer": "The EUDR generally applies from 30 December 2026 for Articles 3–13, 16–24, 26, 31 and 32 [EUDR Art. 38(2)]. However, for operators that are natural persons or micro- or small undertakings established as such by 31 December 2024, those provisions apply from 30 June 2027, except for products covered by the Annex to Regulation (EU) No 995/2010 [EUDR Art. 38(3)]. The Regulation itself entered into force on the twentieth day after publication in the Official Journal [EUDR Art. 38(1)]. Products produced before the date indicated in Article 38(1) are generally outside its scope, subject to Article 37(3) [EUDR Art. 1(2)].",
+      "citations": [
+        "EUDR Art. 38(2)",
+        "EUDR Art. 1(2)",
+        "EUDR Art. 38(1)",
+        "EUDR Art. 38(3)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "The EUDR generally applies from 30 December 2026 for Articles 3–13, 16–24, 26, 31 and 32 [EUDR Art. 38(2)].",
+          "verdict": "supported",
+          "why": "Article 38(2) states these provisions apply from 30 December 2026."
+        },
+        {
+          "sentence": "However, for operators that are natural persons or micro- or small undertakings established as such by 31 December 2024, those provisions apply from 30 June 2027, except for products covered by the Annex to Regulation (EU) No 995/2010 [EUDR Art. 38(3)].",
+          "verdict": "supported",
+          "why": "Article 38(3) states the 30 June 2027 rule and the exception for products covered by Regulation 995/2010."
+        },
+        {
+          "sentence": "The Regulation itself entered into force on the twentieth day after publication in the Official Journal [EUDR Art. 38(1)].",
+          "verdict": "supported",
+          "why": "Article 38(1) states entry into force occurs on the twentieth day after publication."
+        },
+        {
+          "sentence": "Products produced before the date indicated in Article 38(1) are generally outside its scope, subject to Article 37(3) [EUDR Art. 1(2)].",
+          "verdict": "supported",
+          "why": "Article 1(2) states this non-application rule, subject to Article 37(3)."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.6323169469833374,
+      "context_precision": 0.9379251700680271,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q08",
+      "set": "original",
+      "question": "When does the regulation apply to micro and small undertakings?",
+      "status": "answered",
+      "answer": "For micro- or small undertakings established as such by 31 December 2024, the EUDR applies from 30 June 2027, except for products covered by the Annex to Regulation (EU) No 995/2010 [EUDR Art. 38(3)]. This applies irrespective of legal form and includes natural persons [EUDR Art. 38(3)]. The relevant classification is under Article 3(1) or Article 3(2), first subparagraph, of Directive 2013/34/EU [EUDR Art. 38(3)][EUDR Art. 2(30)]. The Commission states that the decisive issue is whether the operator had that status on 31 December 2024, using the thresholds then in force; group thresholds and the 2003 Commission recommendation are not relevant [EC FAQ Q3.10]. Separately, micro or small primary operators are exempt from specified obligations under Article 4a(1) [EUDR Art. 4a(1)].",
+      "citations": [
+        "EUDR Art. 38(3)",
+        "EUDR Art. 2(30)",
+        "EUDR Art. 4a(1)",
+        "EC FAQ Q3.10"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "For micro- or small undertakings established as such by 31 December 2024, the EUDR applies from 30 June 2027, except for products covered by the Annex to Regulation (EU) No 995/2010 [EUDR Art. 38(3)].",
+          "verdict": "supported",
+          "why": "Article 38(3) states the 30 June 2027 application date and exception."
+        },
+        {
+          "sentence": "This applies irrespective of legal form and includes natural persons [EUDR Art. 38(3)].",
+          "verdict": "supported",
+          "why": "Article 38(3) expressly covers natural persons and applies irrespective of legal form."
+        },
+        {
+          "sentence": "The relevant classification is under Article 3(1) or Article 3(2), first subparagraph, of Directive 2013/34/EU [EUDR Art. 38(3)][EUDR Art. 2(30)].",
+          "verdict": "supported",
+          "why": "Article 38(3) and Article 2(30) identify the Directive 2013/34/EU provisions."
+        },
+        {
+          "sentence": "The Commission states that the decisive issue is whether the operator had that status on 31 December 2024, using the thresholds then in force; group thresholds and the 2003 Commission recommendation are not relevant [EC FAQ Q3.10].",
+          "verdict": "supported",
+          "why": "FAQ Q3.10 states the status date, applicable thresholds, and irrelevance of group thresholds and the 2003 recommendation."
+        },
+        {
+          "sentence": "Separately, micro or small primary operators are exempt from specified obligations under Article 4a(1) [EUDR Art. 4a(1)].",
+          "verdict": "supported",
+          "why": "Article 4a(1) expressly excludes micro or small primary operators from specified obligations."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.49644365906715393,
+      "context_precision": 0.7961904761904762,
+      "citation_precision": 0.8333333333333334
+    },
+    {
+      "id": "q09",
+      "set": "original",
+      "question": "What information and geolocation must operators collect?",
+      "status": "answered",
+      "answer": "Operators must collect, organise and retain for five years information, documents and data demonstrating compliance, with evidence, for each relevant product. This includes: a product description (including trade name, type, relevant commodities/products, and—where wood is involved—the species’ common and full scientific names); quantity; country of production and, where relevant, its parts; and the geolocation of all plots of land where the commodities were produced, together with the production date or time range [EUDR Art. 9(1)].\n\nFor micro or small primary operators, the plot geolocation may be replaced by the postal address of all plots or of the establishment from which the commodities were produced [EUDR Art. 4a(5)]. The address must clearly correspond to the relevant geographic location, and the operator may choose between geolocation and postal address [Reg. 2025/2650 Recital 9]. Operators must submit the geolocation information; national prohibitions on sharing it do not remove that obligation [EC FAQ Q1.31].",
+      "citations": [
+        "EUDR Art. 4a(5)",
+        "EUDR Art. 9(1)",
+        "Reg. 2025/2650 Recital 9",
+        "EC FAQ Q1.31"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Operators must collect, organise and retain for five years information, documents and data demonstrating compliance, with evidence, for each relevant product.",
+          "verdict": "supported",
+          "why": "Article 9(1) requires collection, organisation, and five-year retention with evidence for each relevant product."
+        },
+        {
+          "sentence": "This includes: a product description (including trade name, type, relevant commodities/products, and—where wood is involved—the species’ common and full scientific names); quantity; country of production and, where relevant, its parts; and the geolocation of all plots of land where the commodities were produced, together with the production date or time range [EUDR Art. 9(1)].",
+          "verdict": "supported",
+          "why": "Article 9(1) lists the description, quantity, production country and parts, plot geolocation, and production date or time range."
+        },
+        {
+          "sentence": "For micro or small primary operators, the plot geolocation may be replaced by the postal address of all plots or of the establishment from which the commodities were produced [EUDR Art. 4a(5)].",
+          "verdict": "supported",
+          "why": "Article 4a(5) expressly permits this replacement for micro or small primary operators."
+        },
+        {
+          "sentence": "The address must clearly correspond to the relevant geographic location, and the operator may choose between geolocation and postal address [Reg. 2025/2650 Recital 9].",
+          "verdict": "supported",
+          "why": "The recital states the address must correspond clearly to the location and allows a choice between geolocation and postal address."
+        },
+        {
+          "sentence": "Operators must submit the geolocation information; national prohibitions on sharing it do not remove that obligation [EC FAQ Q1.31].",
+          "verdict": "supported",
+          "why": "The FAQ says operators must submit geolocation and cannot rely on national sharing prohibitions to avoid the obligation."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.6014421582221985,
+      "context_precision": 0.9093537414965985,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q10",
+      "set": "original",
+      "question": "Can competent authorities use satellite imagery in their checks?",
+      "status": "answered",
+      "answer": "Yes. Competent authorities may use satellite imagery as part of their checks. The EUDR expressly permits “technical and scientific means” adequate to determine whether products are deforestation-free, including Earth observation data from Copernicus and other publicly or privately available sources [EUDR Art. 18(2)]. Commission guidance also states that spatial imagery tools can help competent authorities perform checks, but the Regulation does not require a specific tool or minimum imagery resolution [EC FAQ Q5.18]. Authorities may cross-check operators’ geolocation coordinates against satellite images or forest-cover maps when assessing compliance with the deforestation-free requirement [EC FAQ Q1.19]. The passages do not specify a mandatory imagery provider, resolution threshold, or single methodology [EC FAQ Q5.18].",
+      "citations": [
+        "EUDR Art. 18(2)",
+        "EC FAQ Q5.18",
+        "EC FAQ Q1.19"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Yes.",
+          "verdict": "supported",
+          "why": "The passages expressly allow Earth observation data and say imagery can help authorities."
+        },
+        {
+          "sentence": "Competent authorities may use satellite imagery as part of their checks.",
+          "verdict": "supported",
+          "why": "Article 18(2)(d) includes Earth observation data among permissible checking means."
+        },
+        {
+          "sentence": "The EUDR expressly permits “technical and scientific means” adequate to determine whether products are deforestation-free, including Earth observation data from Copernicus and other publicly or privately available sources [EUDR Art. 18(2)].",
+          "verdict": "supported",
+          "why": "This closely restates Article 18(2)(d), including Copernicus and other sources."
+        },
+        {
+          "sentence": "Commission guidance also states that spatial imagery tools can help competent authorities perform checks, but the Regulation does not require a specific tool or minimum imagery resolution [EC FAQ Q5.18].",
+          "verdict": "supported",
+          "why": "FAQ Q5.18 says imagery can help authorities and imposes no specific tool or resolution threshold."
+        },
+        {
+          "sentence": "Authorities may cross-check operators’ geolocation coordinates against satellite images or forest-cover maps when assessing compliance with the deforestation-free requirement [EC FAQ Q1.19].",
+          "verdict": "supported",
+          "why": "FAQ Q1.19 expressly permits authorities to cross-check geolocation against satellite images or forest-cover maps."
+        },
+        {
+          "sentence": "The passages do not specify a mandatory imagery provider, resolution threshold, or single methodology [EC FAQ Q5.18].",
+          "verdict": "supported",
+          "why": "FAQ Q5.18 says no specific tools or resolution threshold are imposed; the passages do not identify one methodology."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.51718670129776,
+      "context_precision": 0.6845238095238095,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q11",
+      "set": "original",
+      "question": "Is coffee one of the relevant commodities?",
+      "status": "answered",
+      "answer": "Yes. Coffee is expressly listed as a “relevant commodity” under Article 2(1) of the EUDR [EUDR Art. 2(1)]. The passages also refer to coffee in examples concerning samples and the classification of imported and roasted coffee products [EC FAQ Q2.14 (part 2)] [EC FAQ Q3.1.1].",
+      "citations": [
+        "EUDR Art. 2(1)",
+        "EC FAQ Q2.14 (part 2)",
+        "EC FAQ Q3.1.1"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Yes.",
+          "verdict": "supported",
+          "why": "Article 2(1) expressly lists coffee as a relevant commodity."
+        },
+        {
+          "sentence": "Coffee is expressly listed as a “relevant commodity” under Article 2(1) of the EUDR [EUDR Art. 2(1)].",
+          "verdict": "supported",
+          "why": "Article 2(1) states that relevant commodities include coffee."
+        },
+        {
+          "sentence": "The passages also refer to coffee in examples concerning samples and the classification of imported and roasted coffee products [EC FAQ Q2.14 (part 2)] [EC FAQ Q3.1.1].",
+          "verdict": "supported",
+          "why": "The passages discuss coffee samples and imported, roasted coffee classification."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.6572893261909485,
+      "context_precision": 0.7051587301587302,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "q12",
+      "set": "original",
+      "question": "Does tree loss in the Hansen dataset prove deforestation?",
+      "status": "answered",
+      "answer": "No. Hansen GFC records the year a 30 m pixel “lost tree canopy,” but loss can result from “clearing, pruning, storms, fire or plantation harvest.” It “does not say whether land was converted to agricultural use,” which the dataset note identifies as what the EUDR definition of deforestation requires [Note: Hansen Global Forest Change loss is not deforestation]. The Commission describes deforestation under Article 2 EUDR as “the conversion of forest to agricultural use, whether human-induced or not.” [EC FAQ Q4.1] Thus, Hansen tree loss does not prove EUDR deforestation. The passages leave open whether any particular loss event involved conversion of forest to agricultural use [Note: Hansen Global Forest Change loss is not deforestation][EC FAQ Q4.1].",
+      "citations": [
+        "Note: Hansen Global Forest Change loss is not deforestation",
+        "EC FAQ Q4.1"
+      ],
+      "verification": "repaired",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "No. Hansen GFC records the year a 30 m pixel “lost tree canopy,” but loss can result from “clearing, pruning, storms, fire or plantation harvest.”",
+          "verdict": "supported",
+          "why": "The Hansen passage states canopy loss and lists those possible causes."
+        },
+        {
+          "sentence": "It “does not say whether land was converted to agricultural use,” which the dataset note identifies as what the EUDR definition of deforestation requires [Note: Hansen Global Forest Change loss is not deforestation].",
+          "verdict": "supported",
+          "why": "The passage says Hansen does not identify agricultural conversion and links that conversion to EUDR deforestation."
+        },
+        {
+          "sentence": "The Commission describes deforestation under Article 2 EUDR as “the conversion of forest to agricultural use, whether human-induced or not.” [EC FAQ Q4.1] Thus, Hansen tree loss does not prove EUDR deforestation.",
+          "verdict": "supported",
+          "why": "The FAQ gives that definition, and the passages support that Hansen loss alone does not establish it."
+        },
+        {
+          "sentence": "The passages leave open whether any particular loss event involved conversion of forest to agricultural use [Note: Hansen Global Forest Change loss is not deforestation][EC FAQ Q4.1].",
+          "verdict": "supported",
+          "why": "The passages state Hansen does not say whether loss involved agricultural conversion."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.743598997592926,
+      "context_precision": 0.6666666666666666,
+      "citation_precision": 0.5
+    },
+    {
+      "id": "q13",
+      "set": "original",
+      "question": "What is the speed limit for trucks in Bangalore?",
+      "status": "no_rule_found",
+      "answer": "No rule found in the indexed EUDR texts for this question.",
+      "citations": [],
+      "verification": null,
+      "out_of_scope": true,
+      "abstain_ok": true
+    },
+    {
+      "id": "q14",
+      "set": "original",
+      "question": "How do I bake sourdough bread at home?",
+      "status": "no_rule_found",
+      "answer": "No rule found in the indexed EUDR texts for this question.",
+      "citations": [],
+      "verification": null,
+      "out_of_scope": true,
+      "abstain_ok": true
+    },
+    {
+      "id": "s01",
+      "set": "supervisor",
+      "question": "Does the EUDR agricultural-use exclusion mean coffee cultivated under shade trees is not forest?",
+      "status": "answered",
+      "answer": "No. Shade trees do not automatically mean that coffee-growing land is “forest.” The EUDR definition excludes land “predominantly under agricultural … land use” [EUDR Art. 2(4)]. Commission guidance states that agricultural plantations include “agroforestry systems where crops are grown under tree cover,” and that such plantations are agricultural use and excluded from “forest” [EC Guidance §11.4(c)]. Thus, coffee cultivated under shade trees may fall outside the forest definition where it qualifies as an agricultural plantation or the predominant land use is agriculture. However, the passages do not establish that every shade-coffee plot qualifies: the relevant facts include whether the land is an agroforestry system or otherwise predominantly agricultural. Small-scale production of side products or occasional grazing in forests does not, by itself, make agricultural use predominant [EC Guidance §11.4(b) (part 1)][EC Guidance §11.4(b) (part 2)].",
+      "citations": [
+        "EUDR Art. 2(4)",
+        "EC Guidance §11.4(b) (part 1)",
+        "EC Guidance §11.4(c)",
+        "EC Guidance §11.4(b) (part 2)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "No. Shade trees do not automatically mean that coffee-growing land is “forest.”",
+          "verdict": "supported",
+          "why": "The passages make exclusion depend on agricultural use, not shade trees alone."
+        },
+        {
+          "sentence": "The EUDR definition excludes land “predominantly under agricultural … land use” [EUDR Art. 2(4)].",
+          "verdict": "supported",
+          "why": "Article 2(4) expressly excludes land predominantly under agricultural land use."
+        },
+        {
+          "sentence": "Commission guidance states that agricultural plantations include “agroforestry systems where crops are grown under tree cover,” and that such plantations are agricultural use and excluded from “forest” [EC Guidance §11.4(c)].",
+          "verdict": "supported",
+          "why": "Guidance identifies agroforestry crops under tree cover as agricultural plantations and says they are excluded from forest."
+        },
+        {
+          "sentence": "Thus, coffee cultivated under shade trees may fall outside the forest definition where it qualifies as an agricultural plantation or the predominant land use is agriculture.",
+          "verdict": "supported",
+          "why": "This follows directly from the agricultural-plantation and predominant-use passages."
+        },
+        {
+          "sentence": "However, the passages do not establish that every shade-coffee plot qualifies: the relevant facts include whether the land is an agroforestry system or otherwise predominantly agricultural.",
+          "verdict": "supported",
+          "why": "The passages do not say every shade-coffee plot qualifies and identify relevant classification facts."
+        },
+        {
+          "sentence": "Small-scale production of side products or occasional grazing in forests does not, by itself, make agricultural use predominant [EC Guidance §11.4(b) (part 1)][EC Guidance §11.4(b) (part 2)].",
+          "verdict": "supported",
+          "why": "Guidance excludes small-scale side-product production and occasional forest grazing from establishing predominant agricultural use."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.7860282063484192,
+      "context_precision": 0.5654761904761905,
+      "citation_precision": 0.75
+    },
+    {
+      "id": "s02",
+      "set": "supervisor",
+      "question": "Under the EUDR, can land recorded as coffee under shade trees since 1998 still be forest when forest maps show tree cover?",
+      "status": "answered",
+      "answer": "The passages do not determine whether this specific land is forest. Under Article 2(4), “forest” requires more than 0.5 hectares, trees higher than 5 metres and canopy cover above 10%, while excluding land “predominantly under agricultural or urban land use” [EUDR Art. 2(4)]. Coffee cultivation may therefore be relevant to that exclusion, but the passages do not establish whether coffee under shade trees is predominantly agricultural land in this case. The 1998 recording date is not addressed. The passages leave open the factual classification of this land under Article 2(4).",
+      "citations": [
+        "EUDR Art. 2(4)"
+      ],
+      "verification": "trimmed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "The passages do not determine whether this specific land is forest.",
+          "verdict": "supported",
+          "why": "The passages provide criteria and map caveats, but do not classify this specific land."
+        },
+        {
+          "sentence": "Under Article 2(4), “forest” requires more than 0.5 hectares, trees higher than 5 metres and canopy cover above 10%, while excluding land “predominantly under agricultural or urban land use” [EUDR Art. 2(4)].",
+          "verdict": "supported",
+          "why": "This accurately restates all listed Article 2(4) criteria and exclusion."
+        },
+        {
+          "sentence": "Coffee cultivation may therefore be relevant to that exclusion, but the passages do not establish whether coffee under shade trees is predominantly agricultural land in this case.",
+          "verdict": "supported",
+          "why": "Coffee is identified as relevant, while the passages do not resolve this case’s predominant land use."
+        },
+        {
+          "sentence": "The 1998 recording date is not addressed.",
+          "verdict": "supported",
+          "why": "The passages do not address the 1998 recording date."
+        },
+        {
+          "sentence": "The passages leave open the factual classification of this land under Article 2(4).",
+          "verdict": "supported",
+          "why": "The factual application of Article 2(4) remains unresolved by the passages."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.5703453421592712,
+      "context_precision": 0.9379251700680271,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "s03",
+      "set": "supervisor",
+      "question": "Does tree-cover loss within an existing coffee plantation constitute deforestation under the EUDR?",
+      "status": "answered",
+      "answer": "Not necessarily. Under Article 2(6), an agricultural plantation includes land with tree stands in agricultural production systems and “all plantations of relevant commodities other than wood”; agricultural plantations are excluded from “forest.” [EUDR Art. 2(6)] Coffee plantations therefore generally fall within agricultural use and outside the EUDR forest definition [EC FAQ Q9.10.1 (part 1)] [EC Guidance §11.4(c)].\n\nAccordingly, loss of tree cover within an existing coffee plantation does not, on these passages alone, constitute EUDR deforestation merely because canopy was lost. The EUDR-relevant question is whether forest was converted to agricultural use; a loss dataset may record clearing, pruning, storms, fire, or harvest and does not establish such conversion [Note: Hansen Global Forest Change loss is not deforestation]. The passages leave open the classification of the particular land before the loss and whether the plantation meets the agricultural-plantation criteria.",
+      "citations": [
+        "EUDR Art. 2(6)",
+        "Note: Hansen Global Forest Change loss is not deforestation",
+        "EC FAQ Q9.10.1 (part 1)",
+        "EC Guidance §11.4(c)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Not necessarily.",
+          "verdict": "supported",
+          "why": "The passages do not establish that every instance of tree-cover loss is deforestation."
+        },
+        {
+          "sentence": "Under Article 2(6), an agricultural plantation includes land with tree stands in agricultural production systems and “all plantations of relevant commodities other than wood”; agricultural plantations are excluded from “forest.” [EUDR Art. 2(6)] Coffee plantations therefore generally fall within agricultural use and outside the EUDR forest definition [EC FAQ Q9.10.1 (part 1)] [EC Guidance §11.4(c)].",
+          "verdict": "supported",
+          "why": "Article 2(6) excludes agricultural plantations, including relevant non-wood commodity plantations such as coffee, from forest."
+        },
+        {
+          "sentence": "Accordingly, loss of tree cover within an existing coffee plantation does not, on these passages alone, constitute EUDR deforestation merely because canopy was lost.",
+          "verdict": "supported",
+          "why": "The passages distinguish canopy loss from the conversion to agricultural use required for deforestation."
+        },
+        {
+          "sentence": "The EUDR-relevant question is whether forest was converted to agricultural use; a loss dataset may record clearing, pruning, storms, fire, or harvest and does not establish such conversion [Note: Hansen Global Forest Change loss is not deforestation].",
+          "verdict": "supported",
+          "why": "The dataset note lists multiple causes of loss and says it does not establish conversion to agricultural use."
+        },
+        {
+          "sentence": "The passages leave open the classification of the particular land before the loss and whether the plantation meets the agricultural-plantation criteria.",
+          "verdict": "supported",
+          "why": "The passages do not resolve the particular land's prior classification or whether all criteria are met."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.8676543235778809,
+      "context_precision": 0.7392857142857142,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "s04",
+      "set": "supervisor",
+      "question": "Does forest degradation after 31 December 2020 make coffee non-compliant, or does that rule apply only to wood?",
+      "status": "answered",
+      "answer": "Forest degradation after 31 December 2020 does not, on the wording provided, independently make coffee non-compliant. Article 2(13)(a) defines “deforestation-free” for relevant commodities generally—including coffee—as production on land not subject to deforestation after that date. The separate forest-degradation condition in Article 2(13)(b) applies “in the case of relevant products that contain or have been made using wood.” [EUDR Art. 2(13)]\n\nThus, coffee must satisfy the applicable deforestation-free criterion, along with other EUDR requirements; the passages do not extend the forest-degradation limb to coffee. The Commission guidance confirms that the special two-criterion treatment concerns wood [EC FAQ Q4.3]. Coffee is listed as a relevant commodity, but that recital does not alter Article 2(13)’s distinction [Reg. 2025/2650 Recital 1].",
+      "citations": [
+        "EUDR Art. 2(13)",
+        "EC FAQ Q4.3",
+        "Reg. 2025/2650 Recital 1"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Forest degradation after 31 December 2020 does not, on the wording provided, independently make coffee non-compliant.",
+          "verdict": "supported",
+          "why": "Article 2(13)(b) expressly limits the forest-degradation condition to wood; coffee is covered by (a)."
+        },
+        {
+          "sentence": "Article 2(13)(a) defines “deforestation-free” for relevant commodities generally—including coffee—as production on land not subject to deforestation after that date.",
+          "verdict": "supported",
+          "why": "Article 2(13)(a) refers generally to relevant commodities, and the recital lists coffee as one."
+        },
+        {
+          "sentence": "The separate forest-degradation condition in Article 2(13)(b) applies “in the case of relevant products that contain or have been made using wood.” [EUDR Art. 2(13)]\n\nThus, coffee must satisfy the applicable deforestation-free criterion, along with other EUDR requirements; the passages do not extend the forest-degradation limb to coffee.",
+          "verdict": "supported",
+          "why": "Article 2(13)(b) expressly applies to products containing or made using wood."
+        },
+        {
+          "sentence": "The Commission guidance confirms that the special two-criterion treatment concerns wood [EC FAQ Q4.3].",
+          "verdict": "supported",
+          "why": "FAQ Q4.3 describes the two-criterion treatment as applying to wood."
+        },
+        {
+          "sentence": "Coffee is listed as a relevant commodity, but that recital does not alter Article 2(13)’s distinction [Reg. 2025/2650 Recital 1].",
+          "verdict": "supported",
+          "why": "The recital lists coffee as a relevant commodity and separately states the regulation's deforestation-free requirements; it does not address or change Article 2(13)'s distinction."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.7707452178001404,
+      "context_precision": 0.8333333333333334,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "s05",
+      "set": "supervisor",
+      "question": "If a forest is damaged by fire or a storm and then regrows, is that deforestation?",
+      "status": "answered",
+      "answer": "No. Fire or storm damage followed by natural regeneration is not, by itself, “deforestation.” The EUDR defines deforestation as conversion of forest to agricultural use, whether human-induced or not [EUDR Art. 2(3)]. The Commission explains that a fire followed by conversion to agricultural land is deforestation, but “if the affected forest is allowed to regenerate,” it is not deforestation, and wood may be sourced once it has regrown [EC FAQ Q4.12]. It also states that fire-related forest degradation unrelated to harvesting does not prevent products from being considered deforestation-free, provided harvesting did not induce the degradation and sufficient evidence supports that conclusion [EC FAQ Q4.7]. The passages do not specify every evidentiary requirement for proving regeneration or causation.",
+      "citations": [
+        "EUDR Art. 2(3)",
+        "EC FAQ Q4.7",
+        "EC FAQ Q4.12"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "No. Fire or storm damage followed by natural regeneration is not, by itself, “deforestation.”",
+          "verdict": "supported",
+          "why": "FAQ Q4.12 says regeneration after fire is not deforestation; storm-related protection harvesting is also addressed."
+        },
+        {
+          "sentence": "The EUDR defines deforestation as conversion of forest to agricultural use, whether human-induced or not [EUDR Art. 2(3)].",
+          "verdict": "supported",
+          "why": "Directly restates EUDR Article 2(3)."
+        },
+        {
+          "sentence": "The Commission explains that a fire followed by conversion to agricultural land is deforestation, but “if the affected forest is allowed to regenerate,” it is not deforestation, and wood may be sourced once it has regrown [EC FAQ Q4.12].",
+          "verdict": "supported",
+          "why": "Directly restates FAQ Q4.12, including regeneration and sourcing after regrowth."
+        },
+        {
+          "sentence": "It also states that fire-related forest degradation unrelated to harvesting does not prevent products from being considered deforestation-free, provided harvesting did not induce the degradation and sufficient evidence supports that conclusion [EC FAQ Q4.7].",
+          "verdict": "supported",
+          "why": "Directly restates FAQ Q4.7's conditions on unrelated fire degradation, harvesting, and evidence."
+        },
+        {
+          "sentence": "The passages do not specify every evidentiary requirement for proving regeneration or causation.",
+          "verdict": "no_claim",
+          "why": "States that the passages leave some evidentiary details unspecified."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.7047439217567444,
+      "context_precision": 0.475,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "s06",
+      "set": "supervisor",
+      "question": "How can the geolocation of a plot be checked against satellite images or forest cover maps?",
+      "status": "answered",
+      "answer": "Geolocation can be checked by comparing the plot’s coordinates with satellite imagery, forest-cover maps, or other Earth-observation data to assess whether the product is deforestation-free [EUDR Art. 18(2)] [EC FAQ Q1.19]. The operator must collect coordinates for all plots contributing to the product; if it cannot, the product should not be placed on the EU market or exported [EC FAQ Q1.19]. The EUDR Information System allows users to enter, adjust, and visualise coordinates, but it is not an advanced GIS tool and does not provide background satellite imagery [EC FAQ Q7.5]. Users may therefore verify coordinates using other tools, including free online map services [EC FAQ Q7.5]. Forest-cover maps are evidence for cross-checking, not necessarily conclusive: the JRC map note reports limitations and says forest overlap alone does not establish non-compliance [Note: JRC GFC2020 forest map and coffee].",
+      "citations": [
+        "EUDR Art. 18(2)",
+        "EC FAQ Q1.19",
+        "Note: JRC GFC2020 forest map and coffee",
+        "EC FAQ Q7.5"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Geolocation can be checked by comparing the plot’s coordinates with satellite imagery, forest-cover maps, or other Earth-observation data to assess whether the product is deforestation-free [EUDR Art. 18(2)] [EC FAQ Q1.19].",
+          "verdict": "supported",
+          "why": "Art. 18(2) and FAQ Q1.19 expressly mention Earth-observation data, satellite images, and forest-cover maps for assessing deforestation-free status."
+        },
+        {
+          "sentence": "The operator must collect coordinates for all plots contributing to the product; if it cannot, the product should not be placed on the EU market or exported [EC FAQ Q1.19].",
+          "verdict": "supported",
+          "why": "FAQ Q1.19 states operators must collect all plot coordinates and should not place or export the product if they cannot."
+        },
+        {
+          "sentence": "The EUDR Information System allows users to enter, adjust, and visualise coordinates, but it is not an advanced GIS tool and does not provide background satellite imagery [EC FAQ Q7.5].",
+          "verdict": "supported",
+          "why": "FAQ Q7.5 describes entering, adjusting, and visualising coordinates and says the system lacks advanced GIS features and background satellite imagery."
+        },
+        {
+          "sentence": "Users may therefore verify coordinates using other tools, including free online map services [EC FAQ Q7.5].",
+          "verdict": "supported",
+          "why": "FAQ Q7.5 says users may verify geolocation using other tools and resources, including free online map services."
+        },
+        {
+          "sentence": "Forest-cover maps are evidence for cross-checking, not necessarily conclusive: the JRC map note reports limitations and says forest overlap alone does not establish non-compliance [Note: JRC GFC2020 forest map and coffee].",
+          "verdict": "supported",
+          "why": "The dataset note reports map limitations and expressly says forest overlap alone does not establish non-compliance."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.4604593813419342,
+      "context_precision": 0.9379251700680271,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "s07",
+      "set": "supervisor",
+      "question": "What counts as a plot of land when a coffee estate has several parts?",
+      "status": "answered",
+      "answer": "A “plot of land” is land within one real-estate property recognised under the law of the country of production, with sufficiently homogeneous conditions to assess the aggregate deforestation and forest-degradation risk [EUDR Art. 2(27)]. Thus, a coffee estate may count as one plot if the entire property is sufficiently homogeneous; otherwise, only a distinct part may qualify [EC FAQ Q1.15 (part 1)]. You need identify the plot(s) actually used to produce coffee intended for the EU market, not every plot owned by the estate [EC FAQ Q4.2]. If several qualifying plots supply the coffee, they may be included in one due-diligence statement, but each plot requires its own polygon; one polygon cannot cover several plots [EC FAQ Q1.14]. The passages leave open how national property law and “sufficiently homogeneous” conditions apply to the particular estate.",
+      "citations": [
+        "EUDR Art. 2(27)",
+        "EC FAQ Q1.15 (part 1)",
+        "EC FAQ Q4.2",
+        "EC FAQ Q1.14"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "A “plot of land” is land within one real-estate property recognised under the law of the country of production, with sufficiently homogeneous conditions to assess the aggregate deforestation and forest-degradation risk [EUDR Art. 2(27)].",
+          "verdict": "supported",
+          "why": "Restates the binding Article 2(27) definition."
+        },
+        {
+          "sentence": "Thus, a coffee estate may count as one plot if the entire property is sufficiently homogeneous; otherwise, only a distinct part may qualify [EC FAQ Q1.15 (part 1)].",
+          "verdict": "supported",
+          "why": "FAQ says a whole property or only part may be declared depending on homogeneity."
+        },
+        {
+          "sentence": "You need identify the plot(s) actually used to produce coffee intended for the EU market, not every plot owned by the estate [EC FAQ Q4.2].",
+          "verdict": "supported",
+          "why": "FAQ Q4.2 limits identification to plots producing commodities intended for the EU market."
+        },
+        {
+          "sentence": "If several qualifying plots supply the coffee, they may be included in one due-diligence statement, but each plot requires its own polygon; one polygon cannot cover several plots [EC FAQ Q1.14].",
+          "verdict": "supported",
+          "why": "FAQ Q1.14 permits multiple polygons in one statement and requires one polygon per plot."
+        },
+        {
+          "sentence": "The passages leave open how national property law and “sufficiently homogeneous” conditions apply to the particular estate.",
+          "verdict": "no_claim",
+          "why": "It identifies issues the passages do not resolve for a particular estate."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.5877315402030945,
+      "context_precision": 0.6192857142857143,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "s08",
+      "set": "supervisor",
+      "question": "What does the EUDR require when a coffee plot is located in a designated reserve forest or protected area?",
+      "status": "answered",
+      "answer": "The EUDR requires coffee placed on the EU market or exported to have been produced on a designated “plot of land”; lack of a land registry or formal title does not prevent designation where land is de facto used as a plot [EC FAQ Q1.6]. Indian law defines a “reserved forest” as land settled and notified under Chapter II, and a “protected forest” as government-disposed land placed under special protection or declared protected under the specified provisions [Karnataka Forest Act s.2 (part 4)]. These passages do not state that coffee from a reserve forest or protected area is automatically prohibited, nor do they specify any additional EUDR requirement solely because of that designation.",
+      "citations": [
+        "Karnataka Forest Act s.2 (part 4)",
+        "EC FAQ Q1.6"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "judge_error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 57 (char 56)"
+    },
+    {
+      "id": "s09",
+      "set": "supervisor",
+      "question": "Which laws of the country of production count as relevant legislation for the legality requirement?",
+      "status": "answered",
+      "answer": "Relevant legislation is the applicable law of the country where the commodity was produced—grown, harvested, obtained, or raised on relevant plots of land (or, for cattle, in establishments) [EC Guidance §6(a) (part 1)][EC FAQ Q3.3 (part 1)]. It covers laws concerning the legal status of that production area, including:\n\n- land-use rights;\n- environmental protection;\n- forest management and biodiversity conservation directly related to wood harvesting;\n- third parties’ rights;\n- labour rights;\n- internationally protected human rights;\n- free, prior and informed consent (FPIC); and\n- tax, anti-corruption, trade and customs rules [EUDR Art. 2(40)].\n\nThe list may include national laws, relevant secondary law, and international law applicable domestically, but only insofar as they concern the area’s legal status [EC Guidance §6(a) (part 1)][EC FAQ Q3.3 (part 1)]. Laws of countries where later manufacturing occurs do not count for this legality requirement [EC FAQ Q3.3 (part 1)][EC FAQ Q1.29.1].",
+      "citations": [
+        "EUDR Art. 2(40)",
+        "EC Guidance §6(a) (part 1)",
+        "EC FAQ Q3.3 (part 1)",
+        "EC FAQ Q1.29.1"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Relevant legislation is the applicable law of the country where the commodity was produced—grown, harvested, obtained, or raised on relevant plots of land (or, for cattle, in establishments) [EC Guidance §6(a) (part 1)][EC FAQ Q3.3 (part 1)].",
+          "verdict": "supported",
+          "why": "Passages define country of production and production activities."
+        },
+        {
+          "sentence": "It covers laws concerning the legal status of that production area, including:\n\n- land-use rights;\n- environmental protection;\n- forest management and biodiversity conservation directly related to wood harvesting;\n- third parties’ rights;\n- labour rights;\n- internationally protected human rights;\n- free, prior and informed consent (FPIC); and\n- tax, anti-corruption, trade and customs rules [EUDR Art. 2(40)].",
+          "verdict": "supported",
+          "why": "Art. 2(40) lists all stated legal areas and ties them to the production area's legal status."
+        },
+        {
+          "sentence": "The list may include national laws, relevant secondary law, and international law applicable domestically, but only insofar as they concern the area’s legal status [EC Guidance §6(a) (part 1)][EC FAQ Q3.3 (part 1)].",
+          "verdict": "supported",
+          "why": "FAQ identifies national, secondary, and domestically applicable international law; guidance limits relevance to legal status."
+        },
+        {
+          "sentence": "Laws of countries where later manufacturing occurs do not count for this legality requirement [EC FAQ Q3.3 (part 1)][EC FAQ Q1.29.1].",
+          "verdict": "supported",
+          "why": "FAQ states legality covers only laws applicable in the country of production, not later manufacturing countries."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.5617931485176086,
+      "context_precision": 0.5654761904761905,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "s10",
+      "set": "supervisor",
+      "question": "Is clearing land or forming a plantation allowed inside a reserved forest in Karnataka?",
+      "status": "answered",
+      "answer": "No. Under the Karnataka Forest Act, in a reserved forest, a person who “clears or breaks up any land for cultivation or any other purpose” commits a prohibited act [Karnataka Forest Act s.24 (part 1)]. Forming a plantation would ordinarily involve clearing or breaking up land for cultivation, so it is covered by that prohibition to the extent the activity involves such clearing [Karnataka Forest Act s.24 (part 1)].\n\nThe passages do not state whether any specific permission, lease, or statutory exception could authorize plantation activity. They do show that the forest ceases to be reserved only from a date specified in a State Government notification, subject generally to a resolution by both Houses of the State Legislature [Karnataka Forest Act s.28]. Thus, the passages do not establish that clearing or plantation is allowed while the land remains a reserved forest.",
+      "citations": [
+        "Karnataka Forest Act s.28",
+        "Karnataka Forest Act s.24 (part 1)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "No. Under the Karnataka Forest Act, in a reserved forest, a person who “clears or breaks up any land for cultivation or any other purpose” commits a prohibited act [Karnataka Forest Act s.24 (part 1)].",
+          "verdict": "supported",
+          "why": "Section 24 expressly prohibits clearing or breaking up land in a reserved forest."
+        },
+        {
+          "sentence": "Forming a plantation would ordinarily involve clearing or breaking up land for cultivation, so it is covered by that prohibition to the extent the activity involves such clearing [Karnataka Forest Act s.24 (part 1)].",
+          "verdict": "supported",
+          "why": "It directly connects plantation formation involving clearing to the stated prohibition."
+        },
+        {
+          "sentence": "The passages do not state whether any specific permission, lease, or statutory exception could authorize plantation activity.",
+          "verdict": "supported",
+          "why": "The passages do not address permissions, leases, or exceptions authorizing plantations."
+        },
+        {
+          "sentence": "They do show that the forest ceases to be reserved only from a date specified in a State Government notification, subject generally to a resolution by both Houses of the State Legislature [Karnataka Forest Act s.28].",
+          "verdict": "supported",
+          "why": "Section 28 states cessation occurs from a specified date by State Government notification and generally requires legislative resolution."
+        },
+        {
+          "sentence": "Thus, the passages do not establish that clearing or plantation is allowed while the land remains a reserved forest.",
+          "verdict": "supported",
+          "why": "The passages prohibit clearing in reserved forests and do not establish authorization for such activity."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.7821976542472839,
+      "context_precision": 0.27579365079365076,
+      "citation_precision": 0.6666666666666666
+    },
+    {
+      "id": "s11",
+      "set": "supervisor",
+      "question": "Which fertiliser gives the best coffee yield?",
+      "status": "no_rule_found",
+      "answer": "No rule found in the indexed EUDR texts for this question.",
+      "citations": [],
+      "verification": null,
+      "out_of_scope": true,
+      "abstain_ok": true
+    },
+    {
+      "id": "h01",
+      "set": "held-out",
+      "question": "Is rubber grown under trees treated as agricultural use or as forest?",
+      "status": "answered",
+      "answer": "Rubber grown under trees is treated as agricultural use, not forest, where it falls within an agricultural plantation or agroforestry system. The EUDR defines an agricultural plantation to include “agroforestry systems where crops are grown under tree cover” and states that agricultural plantations are excluded from “forest” [EUDR Art. 2(6)]. Commission guidance specifically confirms that rubber cultivation falls within this definition, including areas with rubber trees [EC FAQ Q4.14][EC Guidance §11.4(c)]. The Recital likewise says agroforestry systems with crops under tree cover constitute agricultural use rather than forest [EUDR Recital 37].\n\nHowever, replacing an existing forest with a rubber plantation is considered deforestation under the Regulation [EC FAQ Q4.14].",
+      "citations": [
+        "EUDR Art. 2(6)",
+        "EC FAQ Q4.14",
+        "EC Guidance §11.4(c)",
+        "EUDR Recital 37"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Rubber grown under trees is treated as agricultural use, not forest, where it falls within an agricultural plantation or agroforestry system.",
+          "verdict": "supported",
+          "why": "Passages classify qualifying rubber plantations/agroforestry as agricultural use and exclude them from forest."
+        },
+        {
+          "sentence": "The EUDR defines an agricultural plantation to include “agroforestry systems where crops are grown under tree cover” and states that agricultural plantations are excluded from “forest” [EUDR Art. 2(6)].",
+          "verdict": "supported",
+          "why": "Article 2(6) states both the agroforestry inclusion and exclusion from forest."
+        },
+        {
+          "sentence": "Commission guidance specifically confirms that rubber cultivation falls within this definition, including areas with rubber trees [EC FAQ Q4.14][EC Guidance §11.4(c)].",
+          "verdict": "unsupported",
+          "why": "Guidance confirms rubber cultivation generally, but does not specifically say areas with rubber trees."
+        },
+        {
+          "sentence": "The Recital likewise says agroforestry systems with crops under tree cover constitute agricultural use rather than forest [EUDR Recital 37].",
+          "verdict": "supported",
+          "why": "Recital 37 expressly treats agroforestry with crops under tree cover as agricultural use, not forest."
+        },
+        {
+          "sentence": "However, replacing an existing forest with a rubber plantation is considered deforestation under the Regulation [EC FAQ Q4.14].",
+          "verdict": "supported",
+          "why": "FAQ Q4.14 expressly says replacing forest with a rubber plantation is deforestation."
+        }
+      ],
+      "faithfulness": 0.8,
+      "answer_relevance": 0.7493774890899658,
+      "context_precision": 0.7678571428571428,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h02",
+      "set": "held-out",
+      "question": "How can farmers give the location of their plots when land titles or property registers are missing?",
+      "status": "answered",
+      "answer": "Farmers can provide the geolocation of their plots even if the plots are not recorded in a land registry and they lack land IDs or titles. The required information is the plot’s latitude and longitude, using at least six decimal digits; plots over four hectares generally require a polygon describing the perimeter [EUDR Art. 2(28)]. The Commission states that no personal information from farmers is required unless they are direct suppliers or operators; the plot’s geolocation is sufficient [EC FAQ Q1.10 (part 1)]. If domestic law does not require a land title to produce and commercialise agricultural products, the EUDR does not impose that requirement, although operators must verify compliance with applicable national laws [EC FAQ Q1.10 (part 1)]. Micro or small primary operators may instead provide the postal address of each plot or the producing establishment, where it corresponds to the geographic location [EUDR Art. 4a(5)][Reg. 2025/2650 Recital 9].",
+      "citations": [
+        "EUDR Art. 2(28)",
+        "EUDR Art. 4a(5)",
+        "Reg. 2025/2650 Recital 9",
+        "EC FAQ Q1.10 (part 1)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Farmers can provide the geolocation of their plots even if the plots are not recorded in a land registry and they lack land IDs or titles.",
+          "verdict": "supported",
+          "why": "FAQ expressly allows geolocation collection despite missing registry entries, IDs, or titles."
+        },
+        {
+          "sentence": "The required information is the plot’s latitude and longitude, using at least six decimal digits; plots over four hectares generally require a polygon describing the perimeter [EUDR Art. 2(28)].",
+          "verdict": "supported",
+          "why": "Article 2(28) specifies latitude/longitude, six decimal digits, and polygons for plots over four hectares."
+        },
+        {
+          "sentence": "The Commission states that no personal information from farmers is required unless they are direct suppliers or operators; the plot’s geolocation is sufficient [EC FAQ Q1.10 (part 1)].",
+          "verdict": "supported",
+          "why": "FAQ states no personal information is required from non-direct-supplier farmers and geolocation is sufficient."
+        },
+        {
+          "sentence": "If domestic law does not require a land title to produce and commercialise agricultural products, the EUDR does not impose that requirement, although operators must verify compliance with applicable national laws [EC FAQ Q1.10 (part 1)].",
+          "verdict": "supported",
+          "why": "FAQ says no title is required if domestic law does not require one, while applicable national laws must be complied with."
+        },
+        {
+          "sentence": "Micro or small primary operators may instead provide the postal address of each plot or the producing establishment, where it corresponds to the geographic location [EUDR Art. 4a(5)][Reg. 2025/2650 Recital 9].",
+          "verdict": "supported",
+          "why": "Article 4a(5) and the recital allow postal addresses for micro or small primary operators when they correspond to the geographic location."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.5751964449882507,
+      "context_precision": 0.8134920634920634,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h03",
+      "set": "held-out",
+      "question": "Can one polygon be drawn around several separate coffee plots?",
+      "status": "answered",
+      "answer": "No. Each polygon should describe the perimeter of one single plot of land, whether contiguous or not [EC FAQ Q1.14]. If coffee in a product comes from several separate plots, several polygons must be included in the same due diligence statement [EC FAQ Q1.14]. A polygon cannot instead enclose a broader area containing plots only in some parts [EC FAQ Q1.14]. For plots larger than four hectares, the EUDR requires sufficient latitude and longitude points to describe the perimeter of each plot [EUDR Art. 2(28)].",
+      "citations": [
+        "EUDR Art. 2(28)",
+        "EC FAQ Q1.14"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "No. Each polygon should describe the perimeter of one single plot of land, whether contiguous or not [EC FAQ Q1.14].",
+          "verdict": "supported",
+          "why": "FAQ Q1.14 says each polygon should indicate one single plot."
+        },
+        {
+          "sentence": "If coffee in a product comes from several separate plots, several polygons must be included in the same due diligence statement [EC FAQ Q1.14].",
+          "verdict": "supported",
+          "why": "FAQ Q1.14 requires several polygons where products come from several plots."
+        },
+        {
+          "sentence": "A polygon cannot instead enclose a broader area containing plots only in some parts [EC FAQ Q1.14].",
+          "verdict": "supported",
+          "why": "FAQ Q1.14 rejects polygons enclosing areas containing plots only in some parts."
+        },
+        {
+          "sentence": "For plots larger than four hectares, the EUDR requires sufficient latitude and longitude points to describe the perimeter of each plot [EUDR Art. 2(28)].",
+          "verdict": "supported",
+          "why": "Article 2(28) requires sufficient points to describe each plot’s perimeter when over four hectares."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.3655054569244385,
+      "context_precision": 0.5873015873015873,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h04",
+      "set": "held-out",
+      "question": "Can a small coffee grower give a postal address instead of GPS coordinates?",
+      "status": "answered",
+      "answer": "Yes—if the grower qualifies as a micro or small primary operator, the geolocation may be replaced by the postal address of all relevant plots or of the establishment where the coffee was produced [EUDR Art. 4a(5)]. The postal address must clearly correspond to the geographic location of the plots or establishment [Reg. 2025/2650 Recital 9]. The grower must verify that the address is correct and be able to prove its accuracy; incorrect information breaches the Regulation [EC FAQ Q1.12]. This is an alternative, not an additional requirement: the operator may choose between geolocation and the qualifying postal address [Reg. 2025/2650 Recital 9]. The passages do not specify further criteria for determining whether a particular grower qualifies as “micro or small.”",
+      "citations": [
+        "EUDR Art. 4a(5)",
+        "Reg. 2025/2650 Recital 9",
+        "EC FAQ Q1.12"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Yes—if the grower qualifies as a micro or small primary operator, the geolocation may be replaced by the postal address of all relevant plots or of the establishment where the coffee was produced [EUDR Art. 4a(5)].",
+          "verdict": "supported",
+          "why": "Article 4a(5) expressly permits micro or small primary operators to replace geolocation with postal addresses of plots or the establishment."
+        },
+        {
+          "sentence": "The postal address must clearly correspond to the geographic location of the plots or establishment [Reg. 2025/2650 Recital 9].",
+          "verdict": "supported",
+          "why": "The recital requires the postal address to clearly correspond to the geographic location."
+        },
+        {
+          "sentence": "The grower must verify that the address is correct and be able to prove its accuracy; incorrect information breaches the Regulation [EC FAQ Q1.12].",
+          "verdict": "supported",
+          "why": "FAQ Q1.12 requires verification and proof of correctness and says incorrect information breaches obligations."
+        },
+        {
+          "sentence": "This is an alternative, not an additional requirement: the operator may choose between geolocation and the qualifying postal address [Reg. 2025/2650 Recital 9].",
+          "verdict": "supported",
+          "why": "The recital expressly describes a free choice between geolocation and postal address."
+        },
+        {
+          "sentence": "The passages do not specify further criteria for determining whether a particular grower qualifies as “micro or small.”",
+          "verdict": "no_claim",
+          "why": "It accurately states that the supplied passages do not address the qualification criteria."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.625871479511261,
+      "context_precision": 0.7392857142857142,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h05",
+      "set": "held-out",
+      "question": "What is the difference between forest and other wooded land in the regulation?",
+      "status": "answered",
+      "answer": "“Forest” is the Regulation’s primary category, based on the FAO definition [EC FAQ Q4.13]. “Other wooded land” is defined residually as land “not classified as ‘forest’” that exceeds 0.5 hectares and has either trees over 5 metres with 5–10% canopy cover, trees capable of reaching those thresholds in situ, or combined shrub, bush and tree cover above 10%; predominantly agricultural or urban land is excluded [EUDR Art. 2(12)].\n\nThus, the key difference is that other wooded land falls outside the forest classification but meets specified size, vegetation and cover thresholds [EUDR Art. 2(12)]. The Regulation treats conversion of primary or naturally regenerating forest into other wooded land as forest degradation [EC FAQ Q4.13][EC FAQ Q4.4]. The passages do not provide the full FAO forest definition or resolve every borderline classification.",
+      "citations": [
+        "EUDR Art. 2(12)",
+        "EC FAQ Q4.13",
+        "EC FAQ Q4.4"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "“Forest” is the Regulation’s primary category, based on the FAO definition [EC FAQ Q4.13].",
+          "verdict": "supported",
+          "why": "FAQ states the Regulation relies on the FAO forest definition."
+        },
+        {
+          "sentence": "“Other wooded land” is defined residually as land “not classified as ‘forest’” that exceeds 0.5 hectares and has either trees over 5 metres with 5–10% canopy cover, trees capable of reaching those thresholds in situ, or combined shrub, bush and tree cover above 10%; predominantly agricultural or urban land is excluded [EUDR Art. 2(12)].",
+          "verdict": "supported",
+          "why": "Article 2(12) states all listed criteria and exclusions."
+        },
+        {
+          "sentence": "Thus, the key difference is that other wooded land falls outside the forest classification but meets specified size, vegetation and cover thresholds [EUDR Art. 2(12)].",
+          "verdict": "supported",
+          "why": "Directly summarizes the residual classification and thresholds."
+        },
+        {
+          "sentence": "The Regulation treats conversion of primary or naturally regenerating forest into other wooded land as forest degradation [EC FAQ Q4.13][EC FAQ Q4.4].",
+          "verdict": "supported",
+          "why": "Both FAQs state this conversion is forest degradation."
+        },
+        {
+          "sentence": "The passages do not provide the full FAO forest definition or resolve every borderline classification.",
+          "verdict": "supported",
+          "why": "Passages identify the FAO basis but do not provide its full definition or settle every borderline case."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.7759688496589661,
+      "context_precision": 0.9484126984126983,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h06",
+      "set": "held-out",
+      "question": "What does primary forest mean?",
+      "status": "answered",
+      "answer": "“Primary forest” means a naturally regenerated forest of native tree species where:\n\n- there are no clearly visible indications of human activities; and\n- ecological processes are not significantly disturbed [EUDR Art. 2(8)].\n\nThe passage does not further define “naturally regenerated,” “clearly visible indications,” or “significantly disturbed.”",
+      "citations": [
+        "EUDR Art. 2(8)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "“Primary forest” means a naturally regenerated forest of native tree species where:\n\n- there are no clearly visible indications of human activities; and\n- ecological processes are not significantly disturbed [EUDR Art. 2(8)].",
+          "verdict": "supported",
+          "why": "Restates all elements of the binding definition."
+        },
+        {
+          "sentence": "The passage does not further define “naturally regenerated,” “clearly visible indications,” or “significantly disturbed.”",
+          "verdict": "no_claim",
+          "why": "States that the passage leaves these terms further undefined."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.8258986473083496,
+      "context_precision": 0.5,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h07",
+      "set": "held-out",
+      "question": "What fines and other penalties can be imposed for breaking the regulation?",
+      "status": "answered",
+      "answer": "Member States must establish and implement penalties for EUDR infringements [EUDR Art. 25(1)]. Penalties must be effective, proportionate and dissuasive [EUDR Art. 25(2)]. They may include:\n\n- fines proportionate to environmental damage and the value of the commodities/products, designed to remove economic benefits and increased for repeat infringements; for legal persons, the maximum fine must be at least 4% of the relevant preceding financial year’s total EU-wide turnover, and may need to exceed the economic benefit gained; [EUDR Art. 25(2)]\n- confiscation of products and infringement-related revenues; [EUDR Art. 25(2)]\n- exclusion for up to 12 months from public procurement and public funding; [EUDR Art. 25(2)]\n- temporary prohibition on placing/making products available on the market or exporting them for serious or repeated infringements; and [EUDR Art. 25(2)]\n- prohibition on using simplified due diligence for serious or repeated infringements [EUDR Art. 25(2)].\n\nMember States define the detailed penalties and fine levels [EC FAQ Q10.2]. Final judgments against legal persons and penalties imposed must be notified and published by the Commission [EUDR Art. 25(3)].",
+      "citations": [
+        "EUDR Art. 25(3)",
+        "EUDR Art. 25(2)",
+        "EUDR Art. 25(1)",
+        "EC FAQ Q10.2"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "judge_error": "JSONDecodeError: Expecting ',' delimiter: line 1 column 54 (char 53)"
+    },
+    {
+      "id": "h08",
+      "set": "held-out",
+      "question": "Who can declare land to be a reserved forest in Karnataka?",
+      "status": "answered",
+      "answer": "The State Government can declare land to be a reserved forest in Karnataka. It may constitute as a reserved forest government-owned land, land over which it has proprietary rights, or forest produce to which it is entitled, following the procedure in the Act [Karnataka Forest Act s.3]. After claims, appeals, and required proceedings have been completed, the State Government must publish a notification clearly specifying the forest’s boundaries and declaring it a reserved forest from the date stated in the notification [Karnataka Forest Act s.17]. A “reserved forest” is land settled and notified under Chapter II of the Karnataka Forest Act [Karnataka Forest Act s.2 (part 4)].",
+      "citations": [
+        "Karnataka Forest Act s.17",
+        "Karnataka Forest Act s.3",
+        "Karnataka Forest Act s.2 (part 4)"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "The State Government can declare land to be a reserved forest in Karnataka.",
+          "verdict": "supported",
+          "why": "Section 17 assigns the declaration to the State Government."
+        },
+        {
+          "sentence": "It may constitute as a reserved forest government-owned land, land over which it has proprietary rights, or forest produce to which it is entitled, following the procedure in the Act [Karnataka Forest Act s.3].",
+          "verdict": "supported",
+          "why": "Section 3 expressly gives the State Government this power and specifies the covered property."
+        },
+        {
+          "sentence": "After claims, appeals, and required proceedings have been completed, the State Government must publish a notification clearly specifying the forest’s boundaries and declaring it a reserved forest from the date stated in the notification [Karnataka Forest Act s.17].",
+          "verdict": "supported",
+          "why": "Section 17 states these prerequisites and requires the State Government’s boundary notification."
+        },
+        {
+          "sentence": "A “reserved forest” is land settled and notified under Chapter II of the Karnataka Forest Act [Karnataka Forest Act s.2 (part 4)].",
+          "verdict": "supported",
+          "why": "Section 2(14) defines reserved forest as land settled and notified under Chapter II."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.8759563565254211,
+      "context_precision": 0.19642857142857142,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h09",
+      "set": "held-out",
+      "question": "Is forest cleared to build a road after 2020 counted as deforestation?",
+      "status": "answered",
+      "answer": "No, not under the EUDR’s definition of deforestation. Article 2(3), as quoted in Commission guidance, defines deforestation as “conversion of forest to agricultural use.” The guidance states that conversion for “urban development or infrastructure does not fall under the deforestation definition” and gives as an example wood from a forest area “legally harvested to build a road.” [EC FAQ Q4.11]\n\nThe EUDR’s “deforestation-free” definition nevertheless requires production on land “that has not been subject to deforestation after 31 December, 2020.” [EUDR Art. 2(13)] The passages therefore leave open requirements or consequences not specifically addressed here, including how other rules apply to the particular road project.",
+      "citations": [
+        "EUDR Art. 2(13)",
+        "EC FAQ Q4.11"
+      ],
+      "verification": "repaired",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "No, not under the EUDR’s definition of deforestation.",
+          "verdict": "supported",
+          "why": "The guidance says infrastructure conversion, including road building, is not deforestation."
+        },
+        {
+          "sentence": "Article 2(3), as quoted in Commission guidance, defines deforestation as “conversion of forest to agricultural use.”",
+          "verdict": "supported",
+          "why": "The Commission guidance quotes Article 2(3) defining deforestation as conversion of forest to agricultural use."
+        },
+        {
+          "sentence": "The guidance states that conversion for “urban development or infrastructure does not fall under the deforestation definition” and gives as an example wood from a forest area “legally harvested to build a road.” [EC FAQ Q4.11]\n\nThe EUDR’s “deforestation-free” definition nevertheless requires production on land “that has not been subject to deforestation after 31 December, 2020.” [EUDR Art. 2(13)] The passages therefore leave open requirements or consequences not specifically addressed here, including how other rules apply to the particular road project.",
+          "verdict": "supported",
+          "why": "The guidance expressly excludes infrastructure and gives legally harvested road-building wood as an example."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.6583500504493713,
+      "context_precision": 0.6666666666666666,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h10",
+      "set": "held-out",
+      "question": "What happens to commodities grown on communal or public land that is not real estate?",
+      "status": "answered",
+      "answer": "Commodities grown on public or communal land that is not real estate may still be placed on the EU market or exported if the land can be designated as a “plot of land.” [EC FAQ Q1.6] A plot of land is land within a single real-estate property recognised under the production country’s law, with sufficiently homogeneous conditions for assessing deforestation and forest-degradation risk [EUDR Art. 2(27)]. However, the absence of a land registry or formal title should not by itself prevent designation where the land is de facto used as a plot of land [EC FAQ Q1.6]. The passages do not specify further requirements for communal or public ownership.",
+      "citations": [
+        "EUDR Art. 2(27)",
+        "EC FAQ Q1.6"
+      ],
+      "verification": "passed",
+      "out_of_scope": false,
+      "abstain_ok": true,
+      "claims": [
+        {
+          "sentence": "Commodities grown on public or communal land that is not real estate may still be placed on the EU market or exported if the land can be designated as a “plot of land.” [EC FAQ Q1.6] A plot of land is land within a single real-estate property recognised under the production country’s law, with sufficiently homogeneous conditions for assessing deforestation and forest-degradation risk [EUDR Art. 2(27)].",
+          "verdict": "supported",
+          "why": "FAQ permits designation as a plot; Article 2(27) defines plot of land."
+        },
+        {
+          "sentence": "However, the absence of a land registry or formal title should not by itself prevent designation where the land is de facto used as a plot of land [EC FAQ Q1.6].",
+          "verdict": "supported",
+          "why": "The FAQ expressly says absent registry or formal title should not prevent designation of de facto-used land."
+        },
+        {
+          "sentence": "The passages do not specify further requirements for communal or public ownership.",
+          "verdict": "no_claim",
+          "why": "It accurately states that the passages do not address further ownership requirements."
+        }
+      ],
+      "faithfulness": 1.0,
+      "answer_relevance": 0.5618968605995178,
+      "context_precision": 0.6666666666666666,
+      "citation_precision": 1.0
+    },
+    {
+      "id": "h11",
+      "set": "held-out",
+      "question": "How often should coffee plants be watered in the dry season?",
+      "status": "no_rule_found",
+      "answer": "No rule found in the indexed EUDR texts for this question.",
+      "citations": [],
+      "verification": null,
+      "out_of_scope": true,
+      "abstain_ok": true
+    },
+    {
+      "id": "h12",
+      "set": "held-out",
+      "question": "Who won the cricket world cup in 2023?",
+      "status": "no_rule_found",
+      "answer": "No rule found in the indexed EUDR texts for this question.",
+      "citations": [],
+      "verification": null,
+      "out_of_scope": true,
+      "abstain_ok": true
+    }
+  ]
+}

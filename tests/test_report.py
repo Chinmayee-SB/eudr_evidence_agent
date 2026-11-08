@@ -52,3 +52,14 @@ def test_pack_includes_documents_and_adds_pdf_pages(tmp_path):
 def test_non_western_text_does_not_break_the_pack():
     plot = load_plots()["C-02"]
     assert report.build_evidence_pack(plot, officer_note="ಕಾಫಿ ≥ 10") .startswith(b"%PDF")
+
+
+def test_rule_citations_show_how_binding_they_are():
+    from eudr_agent.report import _rules_section
+
+    check = {"question": "Is shade coffee forest?", "answer": "No [EUDR Art. 2(6)].", "citations": ["EUDR Art. 2(6)"],
+             "sources": [{"ref": "EUDR Art. 2(6)", "kind": "law", "label": "EU law (binding)"},
+                         {"ref": "EC Guidance §11.4(d)", "kind": "guidance",
+                          "label": "Commission guidance (not legally binding)"}]}
+    text = " ".join(getattr(item, "text", "") for item in _rules_section([check]))
+    assert "EUDR Art. 2(6) (EU law (binding))" in text and "not legally binding" in text

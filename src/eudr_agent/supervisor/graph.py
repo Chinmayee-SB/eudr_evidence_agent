@@ -96,13 +96,18 @@ def supervisor_node(case: CaseFile) -> CaseFile:
 def make_rules_node(ask: Callable[..., Any]) -> Callable[[CaseFile], CaseFile]:
     def rules_node(case: CaseFile) -> CaseFile:
         answers = []
+        decision = (case.get("decisions") or [{}])[-1]
+        points = dict(zip(decision.get("questions", []), decision.get("points", [])))
         for question in case.get("pending_questions", []):
             try:
                 final = ask(question, tracer=_tracer(case))
-                answers.append({"question": question, "answer": final["answer"],
-                                "citations": final["citations"], "status": final["status"]})
+                answers.append({"question": question, "point": points.get(question), "answer": final["answer"],
+                                "citations": final["citations"], "sources": final.get("sources", []),
+                                "verification": final.get("verification", "not_run"),
+                                "status": final["status"]})
             except Exception as error:
-                answers.append({"question": question, "status": "failed", "citations": [],
+                answers.append({"question": question, "point": points.get(question), "status": "failed",
+                                "citations": [], "sources": [],
                                 "error": f"{type(error).__name__}: {error}"[:300]})
         return {"rules": [*case.get("rules", []), *answers], "pending_questions": [],
                 "steps": case.get("steps", 0) + 1}

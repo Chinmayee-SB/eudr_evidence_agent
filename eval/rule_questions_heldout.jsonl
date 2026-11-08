@@ -1,0 +1,12 @@
+{"id": "h01", "set": "held-out", "question": "Is rubber grown under trees treated as agricultural use or as forest?", "expected": ["EC FAQ Q4.14", "EUDR Art. 2(6)"]}
+{"id": "h02", "set": "held-out", "question": "How can farmers give the location of their plots when land titles or property registers are missing?", "expected": ["EC FAQ Q1.10"]}
+{"id": "h03", "set": "held-out", "question": "Can one polygon be drawn around several separate coffee plots?", "expected": ["EC FAQ Q1.14"]}
+{"id": "h04", "set": "held-out", "question": "Can a small coffee grower give a postal address instead of GPS coordinates?", "expected": ["EUDR Art. 4a(5)", "EC FAQ Q1.12"]}
+{"id": "h05", "set": "held-out", "question": "What is the difference between forest and other wooded land in the regulation?", "expected": ["EUDR Art. 2(12)", "EC FAQ Q4.13"]}
+{"id": "h06", "set": "held-out", "question": "What does primary forest mean?", "expected": ["EUDR Art. 2(8)"]}
+{"id": "h07", "set": "held-out", "question": "What fines and other penalties can be imposed for breaking the regulation?", "expected": ["EUDR Art. 25(2)"]}
+{"id": "h08", "set": "held-out", "question": "Who can declare land to be a reserved forest in Karnataka?", "expected": ["Karnataka Forest Act s.3", "Karnataka Forest Act s.17"]}
+{"id": "h09", "set": "held-out", "question": "Is forest cleared to build a road after 2020 counted as deforestation?", "expected": ["EC FAQ Q4.11", "EUDR Art. 2(3)"]}
+{"id": "h10", "set": "held-out", "question": "What happens to commodities grown on communal or public land that is not real estate?", "expected": ["EC FAQ Q1.6"]}
+{"id": "h11", "set": "held-out", "question": "How often should coffee plants be watered in the dry season?", "expected": [], "out_of_scope": true}
+{"id": "h12", "set": "held-out", "question": "Who won the cricket world cup in 2023?", "expected": [], "out_of_scope": true}

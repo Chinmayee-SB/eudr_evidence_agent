@@ -21,6 +21,7 @@ from eudr_agent.geo import agent as geo_agent
 from eudr_agent.geo import tools as geo_tools
 from eudr_agent.plots import load_plots
 from eudr_agent.rag import agent as rag_agent
+from eudr_agent.rag.chunk import KINDS, KINDS_SHORT
 from eudr_agent.state import Finding, PlotInput
 from eudr_agent.tracing import Tracer
 
@@ -98,6 +99,9 @@ html, body, [data-testid="stAppViewContainer"], .stMarkdown, button, input, text
 .chip { display:inline-block; background:var(--raised); border:1px solid var(--line); color:var(--bean);
         font-family:'IBM Plex Mono', monospace; font-size:.76rem; padding:2px 8px; margin:0 5px 5px 0; }
 .chip.mock { color:var(--alert); }
+.chip.guidance, .chip.recital { border-style:dashed; }  /* explains the law, does not bind */
+.chip.note { border-style:dotted; color:var(--muted); }  /* our own dataset note, not a legal source */
+.chip small { color:var(--muted); font-size:.68rem; }
 .prose { color:var(--ink); font-size:.95rem; line-height:1.55; margin:0 0 8px; }
 .prose-list { color:var(--ink); font-size:.92rem; line-height:1.45; margin:4px 0 12px; padding-left:18px; }
 .note { color:var(--muted); font-size:.82rem; margin:0 0 10px; }
@@ -421,6 +425,7 @@ def run_rule_check(case: dict[str, Any], question: str, slot: Any) -> None:
     try:
         final = rag_agent.ask(question, tracer=tracer)
         case["rules"].insert(0, {"question": question, "answer": final["answer"], "citations": final["citations"],
+                                 "sources": final.get("sources", []),
                                  "status": final["status"], "events": tracer.events, "trace": tracer.path.name})
     except Exception as error:
         case["rules"].insert(0, {"question": question, "error": f"{type(error).__name__}: {error}"[:300],
@@ -431,7 +436,10 @@ def run_rule_check(case: dict[str, Any], question: str, slot: Any) -> None:
 def render_rule_result(check: dict[str, Any], index: int) -> None:
     rewrites = sum(1 for event in check["events"] if event["node"] == "rewrite")
     loop = f'<span class="loopflag">Feedback loop ran {rewrites}x</span>' if rewrites else ""
-    chips = "".join(f'<span class="chip">{e(ref)}</span>' for ref in check["citations"])
+    sources = check.get("sources") or [{"ref": ref, "kind": ""} for ref in check["citations"]]
+    chips = "".join(f'<span class="chip {e(s["kind"])}" title="{e(KINDS.get(s["kind"], ""))}">{e(s["ref"])}'
+                    + (f' <small>· {e(KINDS_SHORT[s["kind"]])}</small>' if s["kind"] in KINDS_SHORT else "")
+                    + '</span>' for s in sources)
     body = check.get("answer") or check.get("error", "")
     html(f'<div class="card"><p class="question">{e(check["question"])}</p><p class="prose">{e(body)}</p>{chips} {loop}</div>')
     with st.expander("Show this check's trace", expanded=bool(rewrites) and index == 0):
@@ -441,7 +449,8 @@ def render_rule_result(check: dict[str, Any], index: int) -> None:
 
 def render_rules(plot: PlotInput, case: dict[str, Any]) -> None:
     plot_id = plot["plot_id"]
-    html('<p class="note">Each answer must cite retrieved EUDR text, or the agent declines. Until the supervisor is '
+    html('<p class="note">Each answer must cite at least one legal source it retrieved (EU law, Commission guidance '
+         'or Indian law), or the agent declines. Each citation shows how binding it is. Until the supervisor is '
          'built, an officer starts these checks by hand.</p>')
     question = None
     for column, preset in zip(st.columns(len(RULE_QUESTIONS)), RULE_QUESTIONS):

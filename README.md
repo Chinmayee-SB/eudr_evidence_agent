@@ -9,7 +9,7 @@ Clear / Needs evidence / High risk with an evidence file. A person approves ever
 
 | Part | Owner | Status |
 |---|---|---|
-| Rules agent: agentic RAG over EUDR texts | Chinmayee | **Working** (offline and LLM modes), eval in place |
+| Rules agent: agentic RAG over EUDR texts, Commission guidance and Karnataka law | Chinmayee | **Working** (offline and LLM modes); 25-question eval, 100% with the LLM |
 | Geo-analyst agent + satellite tools | Taran | **Working**: 9 tools (7 satellite, document, geometry) and the ReAct loop; Whisp runs as a separate baseline |
 | Input guardrail | Chinmayee | **Working** (`guardrail.py`): blocks, drops or warns before any agent runs |
 | Supervisor: review, routing, officer pause, saved cases | Chinmayee | **Working** in the terminal (`supervisor/`, `scripts/run_case.py`); not yet on the desk |
@@ -56,13 +56,13 @@ tests/
 uv venv --python 3.11 .venv
 uv pip install --python .venv/bin/python -e ".[dev]"
 .venv/bin/python scripts/check_setup.py          # checks the index, LLM chat and LLM tool calling
-.venv/bin/python scripts/build_index.py          # downloads EUDR texts, builds 300+ chunks and both indexes
+.venv/bin/python scripts/build_index.py          # downloads EUDR texts, splits them + the manual PDFs into ~830 citable pieces
 .venv/bin/python scripts/run_geo_tools.py        # satellite checks on the test plots (needs EE_PROJECT, or the cache)
 .venv/bin/python scripts/run_geo_agent.py K-01      # watch the geo-analyst choose tools for one plot
 .venv/bin/python scripts/run_case.py K-01           # full case; stops for the officer and prints the case id
 .venv/bin/python scripts/run_case.py --resume <case id> --approve --reason "..."
 .venv/bin/python scripts/ask.py "Is shade-grown coffee under trees counted as forest?"
-.venv/bin/python eval/run_rag_eval.py            # metrics on 14 rule questions
+.venv/bin/python eval/run_rag_eval.py            # metrics on 25 rule questions (14 general, 11 as the supervisor asks)
 .venv/bin/python scripts/run_whisp_baseline.py   # FAO Whisp on the test plots -> eval/whisp_baseline.csv
 .venv/bin/python -m pytest
 .venv/bin/streamlit run app/streamlit_app.py     # the evidence desk, at http://localhost:8501
@@ -74,13 +74,49 @@ to switch grading, rewriting and answering to the LLM.
 
 ## How the rules agent works
 
-1. **retrieve**: hybrid BM25 + vector search over the regulation, its recitals, the 2025 amendment and our dataset notes.
-2. **grade**: each passage is judged relevant or not (LLM yes/no, or keyword coverage offline).
-3. **rewrite**: if nothing relevant, or the answer fails its check, rewrite the query in the regulation's own terms and retry (max 2).
-4. **answer**: answer only from relevant passages, citing each claim.
-5. **check_citations**: an answer must cite a passage that was actually retrieved; otherwise retry, then "no rule found".
+0. **cache** (`rag/cache.py`): a question already answered, with the same texts, code and model, is answered from `data/cache/rules/` (same answer, no LLM calls). Only verified answers are kept.
+1. **retrieve**: hybrid BM25 + vector search on two shelves: the regulation (articles, recitals, our notes; 12 candidates) and the supporting documents (Commission guidance, Indian law; 8 candidates). A local **reranker** (`rag/rerank.py`, bge-reranker-base ONNX, about 270 MB, downloaded once) reads the question with each candidate and orders all 20. The top 8 go on, keeping each search method's top 2 and at least 3 regulation passages. If the model can't load, the plain two-shelf order is used.
+2. **grade**: one LLM call judges all 8 passages (falls back to one call per passage if the reply can't be read; keyword coverage offline). Binding law is listed first.
+3. **rewrite**: if no relevant *legal* passage was found, or the answer fails its check, rewrite the query in the regulation's own terms and retry (max 2).
+4. **answer**: answer only from relevant passages, citing each claim; each passage is shown with its source type.
+5. **check_citations**: an answer must cite passages that were actually retrieved, **at least one of them a legal source**. Our dataset notes can support an answer but never carry it alone. Otherwise retry, then "no rule found".
+6. **verify** (`rag/verify.py`): every quoted phrase must appear in the passages, word for word (code), and an LLM judge marks each sentence as supported, unsupported or making no claim, against the passages only. A failing answer is written again once, told what failed. If it still fails, the unsupported sentences are removed, and the agent abstains only if nothing supported with a legal citation is left. If the judge itself fails, the answer is kept and marked "not verified".
+
+Every citation carries its source type, shown in the CLI, the desk and the PDF pack: EU law (binding), recital, Commission guidance (not legally binding), Indian law, or our note.
 
 Every step is written to `runs/traces/<run_id>.jsonl`.
+
+**Evaluation.** Two scripts:
+- `eval/run_rag_eval.py`: did the agent find and cite the expected passage (25 questions)
+- `eval/run_rag_quality.py`: standard RAG metrics on 37 questions in 3 sets: original, supervisor-worded, and **held-out**. The held-out questions were written after the search settings were chosen.
+
+Retrieval (exact, first search, top 8, all 32 in-scope questions):
+
+| Search | hit@8 | MRR | nDCG@8 |
+|---|---|---|---|
+| hybrid, no reranker | 0.97 | 0.53 | 0.57 |
+| **hybrid + reranker, keeping each method's top 2 (as built)** | 0.94 | 0.64 | 0.66 |
+| hybrid + reranker, reranker order only | 0.88 | 0.63 | 0.64 |
+
+The reranker ranks the right passage higher, most of all on held-out questions (MRR 0.30 → 0.69), but loses one passage that plain search found.
+
+Answers, end to end (LLM judge gpt-5.6-luna, RAGAS metric definitions; RAGAS itself isn't installed because it would downgrade the OpenAI SDK):
+
+| Metric (37 questions) | No reranker | **With reranker (as built)** |
+|---|---|---|
+| Faithfulness (supported claims / claims) | 0.99 | 1.00 |
+| Context precision | 0.68 | **0.83** |
+| Citation precision | 0.95 | 0.92 |
+| Answer relevance | 0.66 | 0.66 |
+| Abstention correct | 37/37 | 37/37 |
+
+Files: `eval/rag_quality_2026-11-09.json` (with reranker), `eval/rag_quality_no_reranker_2026-11-09.json`. On the 25-question eval, with the reranker: 95% cited correctly. The one miss is s08 (a plot in a reserve forest), answered without Art. 2(40).
+
+Limits:
+- The judge is the same model as the agent.
+- In a hand check, 2/2 "supported" verdicts were right and 5/5 "unsupported" verdicts were wrong. All 5 came from context the judge lacked, and are now fixed.
+- LLM grading varies between runs.
+- The answer cache matches exact questions only. The LLM supervisor words its questions differently each run, so in live cases the cache rarely hits; it helps the code fallback, the desk and repeated identical questions.
 
 ## Data sources
 
@@ -88,4 +124,7 @@ Every step is written to `runs/traces/<run_id>.jsonl`.
 - Regulation (EU) 2023/1115, original text, for its recitals (CELEX 32023R1115)
 - Regulation (EU) 2025/2650, amending regulation, recitals (CELEX 32025R2650)
 
-All from the EU Publications Office. Commission guidance and FAQ are added by hand (see `data/corpus/manual/`).
+All from the EU Publications Office. Added by hand (see `data/corpus/manual/README.md`):
+- Commission Guidance Document for the EUDR, C(2026) 4972, 13 July 2026
+- Commission FAQ on EUDR implementation, version 5, April 2026
+- Karnataka Forest Act 1963, from India Code (the EUDR's legality test refers to the country's own law, Art. 2(40))
