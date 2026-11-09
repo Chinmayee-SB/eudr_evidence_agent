@@ -42,7 +42,14 @@ def print_case(case: CaseFile) -> None:
         cited = [f"{s['ref']} [{KINDS_SHORT.get(s['kind'], s['kind'])}]" for s in r.get("sources", [])]
         print(f"  rule ({r.get('point') or '-'}): {r['question']} -> {r['status']}")
         print(f"      cites: {'; '.join(cited or r.get('citations', [])) or 'none'}")
-    print(f"  draft verdict: {case.get('draft_verdict') or '-'} ({case.get('verdict_note', '')})")
+    print(f"  draft verdict: {(case.get('draft_verdict') or '-').upper()} ({case.get('verdict_note', '')})")
+    detail = case.get("verdict_detail") or {}
+    for reason in detail.get("reasons", []):
+        print(f"      because: {reason}")
+    if detail.get("basis"):
+        print(f"      basis: {', '.join(detail['basis'])}")
+    for caveat in detail.get("caveats", []):
+        print(f"      caveat: {caveat}")
     for item in case.get("open_items", []):
         print(f"  open: {item}")
     if case.get("officer"):

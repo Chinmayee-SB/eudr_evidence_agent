@@ -62,6 +62,8 @@ class CaseFile(TypedDict, total=False):
     reruns: int                  # officer "documents added" re-runs
     draft_verdict: Verdict | None
     verdict_note: str
+    verdict_detail: dict[str, Any]   # the deciding rule, reasons, legal basis, caveats (verdict_rules.py)
+    langsmith_runs: list[str]    # LangSmith run id of the start and of each resume (observability.py)
     officer: OfficerDecision
     final_verdict: Verdict | None    # the officer's: the draft if approved, theirs if overridden
     open_items: list[str]        # what the evidence file must say is missing or not checked

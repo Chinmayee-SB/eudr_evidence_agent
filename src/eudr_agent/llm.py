@@ -7,12 +7,14 @@ from typing import Any
 
 from openai import OpenAI
 
+from eudr_agent import observability
 from eudr_agent.config import settings
 
 
 @lru_cache(maxsize=1)
 def _client() -> OpenAI:
-    return OpenAI(base_url=settings.llm_base_url or None, api_key=settings.llm_api_key)
+    # wrapped so every call is traced in LangSmith when it is switched on (observability.py)
+    return observability.wrap_llm_client(OpenAI(base_url=settings.llm_base_url or None, api_key=settings.llm_api_key))
 
 
 def complete(messages: list[dict[str, Any]], tools: list[dict[str, Any]] | None = None,

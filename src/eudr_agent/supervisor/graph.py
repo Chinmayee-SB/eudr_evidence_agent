@@ -25,6 +25,9 @@ from typing import Any, Callable, get_args
 from langgraph.graph import END, StateGraph
 from langgraph.types import Command, interrupt
 
+import uuid
+
+from eudr_agent import observability
 from eudr_agent.geo import agent as geo_agent
 from eudr_agent.guardrail import check_input
 from eudr_agent.rag import agent as rag_agent
@@ -104,6 +107,7 @@ def make_rules_node(ask: Callable[..., Any]) -> Callable[[CaseFile], CaseFile]:
                 answers.append({"question": question, "point": points.get(question), "answer": final["answer"],
                                 "citations": final["citations"], "sources": final.get("sources", []),
                                 "verification": final.get("verification", "not_run"),
+                                "cached": final.get("cached", ""),
                                 "status": final["status"]})
             except Exception as error:
                 answers.append({"question": question, "point": points.get(question), "status": "failed",
@@ -127,14 +131,12 @@ def _open_items(case: CaseFile) -> list[str]:
 
 def verdict_node(case: CaseFile) -> CaseFile:
     with _tracer(case).span("verdict") as rec:
-        try:
-            verdict, note = verdict_rules.decide(case), "from the fixed verdict rules"
-        except NotImplementedError:
-            verdict, note = None, "not issued: the verdict rules are not built yet"
-        rec.update(verdict=verdict, note=note)
-        rec["summary"] = verdict or note
-    return {"draft_verdict": verdict, "verdict_note": note, "open_items": _open_items(case),
-            "status": "awaiting_officer"}
+        result = verdict_rules.decide(case)
+        note = f"rule {result['rule']}: {result['title']}" if result["rule"] else result["title"]
+        rec.update(verdict=result["verdict"], detail=result)
+        rec["summary"] = f"{result['verdict']} ({note})"
+    return {"draft_verdict": result["verdict"], "verdict_note": note, "verdict_detail": dict(result),
+            "open_items": _open_items(case), "status": "awaiting_officer"}
 
 
 def validate_officer(value: dict[str, Any], case: CaseFile) -> None:
@@ -163,16 +165,17 @@ def officer_node(case: CaseFile) -> CaseFile:
         rec.update(decision=value)
         rec["summary"] = f"{value['decision']}" + (f": {value.get('reason')}" if value.get("reason") else "")
     officer = {k: value[k] for k in ("decision", "verdict", "reason") if value.get(k)}
+    runs = [*case.get("langsmith_runs", []), *([value["run_id"]] if value.get("run_id") else [])]
     if value["decision"] == "documents_added":
         names = ", ".join(Path(p).name for p in value["documents"])
-        return {"officer": officer, "status": "running", "reruns": case.get("reruns", 0) + 1,
+        return {"officer": officer, "status": "running", "reruns": case.get("reruns", 0) + 1, "langsmith_runs": runs,
                 "plot": PlotInput(**{**case["plot"], "documents": list(value["documents"])}),
                 # a fresh evidence round with its own budget; rule answers are kept
                 "steps": 0, "send_backs": 0,
                 "geo_task": f"New documents were added to the case ({names}). Read them and report whether "
                             "they change the evidence."}
     final = value["verdict"] if value["decision"] == "override" else case.get("draft_verdict")
-    return {"officer": officer, "final_verdict": final}
+    return {"officer": officer, "final_verdict": final, "langsmith_runs": runs}
 
 
 def pack_node(case: CaseFile) -> CaseFile:
@@ -223,18 +226,24 @@ def build_graph(checkpointer: Any = None, analyse: Callable[..., Any] = geo_agen
 RECURSION_LIMIT = 60  # far above any path the budgets allow; a safety net only
 
 
-def _config(case_id: str) -> dict[str, Any]:
-    return {"configurable": {"thread_id": case_id}, "recursion_limit": RECURSION_LIMIT}
+def _config(case_id: str, stage: str = "", run_id: str | None = None) -> dict[str, Any]:
+    """The checkpoint thread, plus (when LangSmith is on) the run's name, tags and thread metadata."""
+    config: dict[str, Any] = {"configurable": {"thread_id": case_id}, "recursion_limit": RECURSION_LIMIT}
+    if stage:
+        config |= observability.case_config(case_id, case_id.rsplit("-", 3)[0], stage, run_id)
+    return config
 
 
 def start_case(graph: Any, plot: PlotInput, echo: bool = False, on_event: Callable | None = None) -> CaseFile:
     """Run a new case until it pauses for the officer, is blocked, or ends. Returns the saved case file.
     `echo` prints each step; `on_event` lets a screen show each step as it finishes."""
     case_id = f"{plot['plot_id']}-{new_run_id()}"
+    run_id = str(uuid.uuid4())  # the LangSmith run of this invocation, kept on the case for feedback and links
     _tracers[case_id] = Tracer("supervisor", echo=echo, on_event=on_event, run_id=case_id)
     graph.invoke({"case_id": case_id, "plot": plot, "steps": 0, "send_backs": 0, "reruns": 0,
-                  "findings": [], "geo_reports": [], "decisions": [], "rules": [], "status": "running"},
-                 _config(case_id))
+                  "findings": [], "geo_reports": [], "decisions": [], "rules": [], "status": "running",
+                  "langsmith_runs": [run_id]},
+                 _config(case_id, "start", run_id))
     return get_case(graph, case_id)
 
 
@@ -246,7 +255,10 @@ def resume_case(graph: Any, case_id: str, officer: dict[str, Any], echo: bool = 
         raise ValueError(f"case {case_id} is not waiting for the officer (status: {case.get('status')})")
     validate_officer(officer, case)
     _tracers[case_id] = Tracer("supervisor", echo=echo, on_event=on_event, run_id=case_id)
-    graph.invoke(Command(resume=officer), _config(case_id))
+    run_id = str(uuid.uuid4())
+    graph.invoke(Command(resume={**officer, "run_id": run_id}), _config(case_id, officer["decision"], run_id))
+    # the officer judged the draft from the latest run before this one
+    observability.log_officer_decision((case.get("langsmith_runs") or [None])[-1], officer)
     return get_case(graph, case_id)
 
 

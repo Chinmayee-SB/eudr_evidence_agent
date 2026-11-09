@@ -22,6 +22,7 @@ from functools import lru_cache
 from rank_bm25 import BM25Okapi
 
 from eudr_agent.config import settings
+from eudr_agent.observability import retrieved, traceable
 from eudr_agent.rag import rerank, vector
 from eudr_agent.rag.chunk import Chunk, load_chunks
 
@@ -130,6 +131,8 @@ class Index:
             hits += self._shelf(query, sizes["supporting"], SHELVES["supporting"])
         return hits
 
+    @traceable(run_type="retriever", name="search", process_inputs=lambda i: {"query": i["query"], "k": i.get("k", 5)},
+               process_outputs=retrieved)
     def search(self, query: str, k: int = 5) -> list[Hit]:
         """k + SUPPORT_K passages: reranked across both shelves, or k from the regulation then SUPPORT_K more."""
         self.rerank_note = ""

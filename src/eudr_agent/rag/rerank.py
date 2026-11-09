@@ -16,6 +16,8 @@ import os
 from functools import lru_cache
 from typing import Any
 
+from eudr_agent.observability import traceable
+
 MODEL = os.getenv("RAG_RERANKER", "Xenova/bge-reranker-base")
 MAX_TOKENS = 512   # the model's limit; question and passage together
 BATCH = 16
@@ -39,6 +41,7 @@ def enabled() -> bool:
     return MODEL.lower() not in {"", "none", "off"}
 
 
+@traceable(name="rerank", process_inputs=lambda i: {"question": i["question"], "passages": len(i["passages"])})
 def scores(question: str, passages: list[str]) -> list[float]:
     """One relevance score per passage, higher is better. Raises if the model cannot be loaded."""
     import numpy as np

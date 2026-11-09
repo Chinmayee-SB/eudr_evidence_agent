@@ -15,6 +15,7 @@ from typing import Any, TypedDict
 from langgraph.graph import END, StateGraph
 
 from eudr_agent import llm
+from eudr_agent.observability import traceable
 from eudr_agent.geo import prompts, tools
 from eudr_agent.state import Finding, PlotInput
 from eudr_agent.tracing import Tracer
@@ -71,7 +72,17 @@ def _tools_for(plot: PlotInput) -> list[dict[str, Any]]:
     return [t for t in TOOL_SCHEMAS if t["function"]["name"] != "read_document"]
 
 
+@traceable(run_type="tool", name="geo_tool")
+def _traced_tool(plot_id: str, name: str, args: dict[str, Any], plot: PlotInput) -> Finding:
+    return _run_tool_inner(plot, name, args)
+
+
 def _run_tool(plot: PlotInput, name: str, args: dict[str, Any]) -> Finding:
+    """Run one tool; in LangSmith it shows as a tool run named after the tool."""
+    return _traced_tool(plot["plot_id"], name, args, plot, langsmith_extra={"name": name})
+
+
+def _run_tool_inner(plot: PlotInput, name: str, args: dict[str, Any]) -> Finding:
     if name == "read_document":
         # only the plot's own documents can be opened, whatever name the model asks for
         by_name = {path.rsplit("/", 1)[-1]: path for path in plot.get("documents", [])}

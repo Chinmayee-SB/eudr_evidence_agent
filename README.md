@@ -5,16 +5,30 @@ The agent answers one question for a coffee exporter's compliance officer:
 It combines satellite checks with the EU Deforestation Regulation (EUDR) text and returns
 Clear / Needs evidence / High risk with an evidence file. A person approves every verdict.
 
-## Status (8 Nov 2026)
+## Status (9 Nov 2026)
 
-| Part | Owner | Status |
-|---|---|---|
-| Rules agent: agentic RAG over EUDR texts, Commission guidance and Karnataka law | Chinmayee | **Working** (offline and LLM modes); 25-question eval, 100% with the LLM |
-| Geo-analyst agent + satellite tools | Taran | **Working**: 9 tools (7 satellite, document, geometry) and the ReAct loop; Whisp runs as a separate baseline |
-| Input guardrail | Chinmayee | **Working** (`guardrail.py`): blocks, drops or warns before any agent runs |
-| Supervisor: review, routing, officer pause, saved cases | Chinmayee | **Working** in the terminal (`supervisor/`, `scripts/run_case.py`); not yet on the desk |
-| Verdict rules | Alvin | Not built; the 5 rules are written in `supervisor/verdict_rules.py` |
-| Evidence desk: upload, live trace, PDF evidence pack | Chinmayee | **Working** (`app/streamlit_app.py`, `documents.py`, `report.py`); no verdict yet |
+| Part | Status |
+|---|---|
+| Input guardrail | **Working** (`guardrail.py`): blocks, drops or warns before any agent runs |
+| Geo-analyst agent + satellite tools | **Working**: 8 tools and a ReAct loop that picks only the checks a plot needs; Whisp runs as a separate baseline |
+| Supervisor | **Working**: review, routing, budgets, officer pause, saved cases (SQLite or Postgres) |
+| Rules agent: agentic RAG over the EUDR, Commission guidance and Karnataka law | **Working**: legal-citation rule, claim checks, reranker; faithfulness 0.99 on 37 questions |
+| Verdict rules | **Working** (`supervisor/verdict_rules.py`): 7 fixed rules, each verdict with its reasons, legal basis and caveats |
+| Evidence desk | **Working**: runs the full case, shows each step live, a card for every tool (NDVI chart, boundary variants), budgets used, rule answers with their checks, officer approves / overrides / adds documents, saved cases, PDF pack with the verdict, System view with the evaluations |
+| Tracing | **Working**: local JSONL per case, and LangSmith when its key is set (`observability.py`) |
+
+**End to end** (`eval/run_end_to_end.py`, 9 Nov 2026, real agents, draft verdicts):
+
+| Plot | Human label | FAO Whisp | Ours | Deciding rule |
+|---|---|---|---|---|
+| C-01 | Clear | more info needed | **Clear** | 4: no deforestation after 2020 |
+| C-02 | Clear | more info needed | **Clear** | 6: small, stable loss on coffee farmed before 2020 (caveat: no land record) |
+| K-01 | Clear | low | **Needs evidence** | 7: 82% of the loss disappears when the boundary moves 30 m in |
+| N-01 | High risk | more info needed | **High risk** | 1: inside Hatgat Reserve Forest |
+
+3 of 4 agree with the label, and the 4th asks for evidence rather than disagreeing. Ours catches the
+protected-area plot; Whisp does not, because its risk score ignores protected areas. 4 plots is too few to
+claim accuracy: this shows the system works end to end and where it is cautious.
 
 ## Layout
 
@@ -41,11 +55,11 @@ src/eudr_agent/
     review.py      code review of the evidence: gaps, conflicts, checks not yet possible
     decide.py      the LLM proposes the next step; code enforces budgets and required evidence
     checkpoints.py saved cases: SQLite by default, Postgres if DATABASE_URL is set
-    verdict_rules.py  fixed verdict table (not built)
+    verdict_rules.py  fixed verdict table: 7 rules, first match decides
 data/corpus/notes/ dataset limitation notes the agent can cite
 data/corpus/manual/  drop the Commission guidance + FAQ PDFs here
 data/plots/        4 anonymised test plots, mocked estate details and land records, manual labels
-eval/              rule questions + evaluation script
+eval/              rule questions, RAG metrics, end-to-end run, Whisp baseline, saved results
 scripts/           build_index.py, ask.py
 tests/
 ```
@@ -64,6 +78,8 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 .venv/bin/python scripts/ask.py "Is shade-grown coffee under trees counted as forest?"
 .venv/bin/python eval/run_rag_eval.py            # metrics on 25 rule questions (14 general, 11 as the supervisor asks)
 .venv/bin/python scripts/run_whisp_baseline.py   # FAO Whisp on the test plots -> eval/whisp_baseline.csv
+.venv/bin/python eval/run_rag_quality.py --answers  # RAG metrics: recall@k, MRR, nDCG, faithfulness ...
+.venv/bin/python eval/run_end_to_end.py          # the full case on every plot, vs the labels and Whisp
 .venv/bin/python -m pytest
 .venv/bin/streamlit run app/streamlit_app.py     # the evidence desk, at http://localhost:8501
 ```
@@ -117,6 +133,31 @@ Limits:
 - In a hand check, 2/2 "supported" verdicts were right and 5/5 "unsupported" verdicts were wrong. All 5 came from context the judge lacked, and are now fixed.
 - LLM grading varies between runs.
 - The answer cache matches exact questions only. The LLM supervisor words its questions differently each run, so in live cases the cache rarely hits; it helps the code fallback, the desk and repeated identical questions.
+
+## Tracing
+
+Every case is traced twice:
+- **Locally:** one JSONL file per case in `runs/traces/<case_id>.jsonl`. The desk's step-by-step view reads it, and it works offline.
+- **In LangSmith**, when `.env` has `LANGSMITH_TRACING=true`, `LANGSMITH_API_KEY` and `LANGSMITH_PROJECT` (see `.env.example`).
+
+Each case is one trace tree:
+
+```
+case <id> (start)                                 thread_id = case id
+  guardrail
+  geo_analyst -> LangGraph -> think (LLM call) -> tool runs: protected_area_check, forest_2020, ...
+  supervisor (LLM call)                           routing decision, overruled or not
+  rules_agent -> retrieve -> search (retriever: passages, ref, source type, score) -> rerank
+              -> grade (LLM) -> answer (LLM) -> check_citations -> verify (LLM)
+  verdict                                         rule, reasons, legal basis, caveats
+  officer                                         pauses here
+case <id> (approve | override | documents_added)  same thread
+  officer -> pack
+```
+
+- The officer's decision is logged as feedback (`officer_decision`) on the run that produced the draft verdict.
+- Tests use a fake LangSmith client and never send anything (`tests/test_observability.py`).
+- Sending a trace publishes its content (plot coordinates, document text, prompts) to LangSmith.
 
 ## Data sources
 

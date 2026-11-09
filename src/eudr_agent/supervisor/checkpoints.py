@@ -56,3 +56,16 @@ def open_checkpointer(sqlite_path: Path | None = None) -> Iterator[Any]:
         yield saver
     finally:
         conn.close()
+
+
+def list_case_ids(saver: Any, prefix: str = "", limit: int = 20) -> list[str]:
+    """Saved case ids (the checkpoint threads), newest first. Case ids end in a timestamp, so they sort by time.
+    Both savers keep one row per checkpoint in a table named checkpoints, with the case id as thread_id."""
+    sql = "SELECT DISTINCT thread_id FROM checkpoints WHERE thread_id LIKE ?"
+    pattern = f"{prefix}%"
+    if hasattr(saver, "conn") and isinstance(saver.conn, sqlite3.Connection):
+        rows = [r[0] for r in saver.conn.execute(sql, (pattern,)).fetchall()]
+    else:  # Postgres: a pool of connections, rows as dicts
+        with saver.conn.connection() as conn:
+            rows = [r["thread_id"] for r in conn.execute(sql.replace("?", "%s"), (pattern,)).fetchall()]
+    return sorted(rows, key=lambda case_id: case_id[len(prefix):], reverse=True)[:limit]

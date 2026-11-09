@@ -1,7 +1,9 @@
 """The evidence pack: one PDF holding everything known about a plot, whatever stage the case reached.
 
-The pack reports tool numbers as returned and marks what the LLM wrote. It issues no verdict, because the
-verdict rules are not built yet, and says so. Uploaded PDFs are added unchanged after the report.
+The pack reports tool numbers as returned and marks what the LLM wrote. For a supervisor case it also holds
+the draft verdict from the fixed rules (with the deciding rule, reasons, legal basis and caveats), the
+supervisor's decisions, what is still missing, and the officer's sign-off. Before a case has run, it holds
+evidence only and says so. Uploaded PDFs are added unchanged after the report.
 """
 
 from __future__ import annotations
@@ -33,8 +35,8 @@ TOOL_LABELS = {
     "ndvi_series": "Greenness by year",
     "coffee_probability": "Coffee model",
 }
-NO_VERDICT = ("No verdict issued. The supervisor review, verdict rules and officer sign-off are not built yet, "
-              "so this pack contains evidence only.")
+NO_VERDICT = "No verdict issued: no supervisor case has been run on this plot, so this pack contains evidence only."
+VERDICT_WORDS = {"clear": "Clear", "needs_evidence": "Needs evidence", "high_risk": "High risk", None: "Not issued"}
 ADVISORY = "Advisory screening. A human officer makes every compliance decision."
 
 BLACK = colors.HexColor("#060906")
@@ -216,17 +218,49 @@ def _appendix(paths: list[Path]) -> list[Any]:
     return story
 
 
+def _verdict_section(case: dict[str, Any]) -> list[Any]:
+    detail = case.get("verdict_detail") or {}
+    officer = case.get("officer") or {}
+    draft = VERDICT_WORDS.get(case.get("draft_verdict"), "Not issued")
+    rows = [["Case", case.get("case_id", "")], ["Draft verdict (fixed rules)", draft],
+            ["Deciding rule", case.get("verdict_note", "")]]
+    if officer:
+        decided = {"approve": "Approved the draft", "override": "Overrode the draft",
+                   "documents_added": "Added documents"}.get(officer.get("decision"), officer.get("decision", ""))
+        rows += [["Officer", decided + (f": {officer['reason']}" if officer.get("reason") else "")],
+                 ["Final verdict", VERDICT_WORDS.get(case.get("final_verdict"), "Not issued")]]
+    else:
+        rows.append(["Officer", "Not signed off yet"])
+    story: list[Any] = [Paragraph("Verdict", HEADING), _table([[_para(a, LABEL), _para(b)] for a, b in rows],
+                                                              [55 * mm, 119 * mm]), Spacer(1, 5),
+                        _para("Why", LABEL), *_bullets(detail.get("reasons", []), "No reasons recorded."),
+                        _para("Legal basis", LABEL), *_bullets(detail.get("basis", []), "None."),
+                        _para("Caveats", LABEL), *_bullets(detail.get("caveats", []), "None."),
+                        _para("Still missing or not checked", LABEL), *_bullets(case.get("open_items", []), "Nothing.")]
+    decisions = [f"{d['action']} ({d['source']}): {d['reason']}" + (f" [overruled: {d['overruled']}]" if d.get("overruled") else "")
+                 for d in case.get("decisions", [])]
+    story += [Paragraph("Supervisor decisions, in order", HEADING), *_bullets(decisions, "None.")]
+    return story
+
+
 def build_evidence_pack(plot: PlotInput, geo: dict[str, Any] | None = None, checks: list[dict[str, Any]] | None = None,
-                        officer_note: str = "") -> bytes:
-    """Build the PDF for one plot. Works at any stage, and states what was not done."""
+                        officer_note: str = "", case: dict[str, Any] | None = None) -> bytes:
+    """Build the PDF for one plot. Works at any stage, and states what was not done. `case` is a supervisor case
+    file; when given, the pack leads with its verdict and sign-off."""
     checks = checks or []
     paths = [Path(p) for p in plot.get("documents", [])]
-    trace_files = [item["trace"] for item in [geo or {}, *checks] if item.get("trace")]
+    trace_files = list(dict.fromkeys(item["trace"] for item in [geo or {}, *checks] if item.get("trace")))
+    if case:
+        status = (f"Draft verdict: {VERDICT_WORDS.get(case.get('draft_verdict'), 'Not issued')}. "
+                  + (f"Final verdict: {VERDICT_WORDS.get(case.get('final_verdict'), 'Not issued')}."
+                     if case.get("status") == "closed" else "Waiting for the officer's sign-off."))
+        lead = [_para(status, LABEL), _para(ADVISORY), Spacer(1, 6), *_verdict_section(case)]
+    else:
+        lead = [_para(NO_VERDICT, LABEL), _para(ADVISORY), Spacer(1, 6)]
 
     story: list[Any] = [
         Paragraph(f"Plot {_clean(plot['plot_id'])}", HEADING),
-        _para(f"Generated {time.strftime('%d %b %Y, %H:%M')}", SMALL), Spacer(1, 6),
-        _para(NO_VERDICT, LABEL), _para(ADVISORY), Spacer(1, 6),
+        _para(f"Generated {time.strftime('%d %b %Y, %H:%M')}", SMALL), Spacer(1, 6), *lead,
         *_plot_section(plot), *_geo_section(geo), *_rules_section(checks), *_documents_section(paths, geo),
         Paragraph("Officer note", HEADING), _para(officer_note.strip() or "None recorded."),
         Paragraph("Trace files", HEADING),
