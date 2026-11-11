@@ -1,0 +1,12 @@
+{
+ "tool": "forest_2020",
+ "dataset": "JRC/GFC2020/V4; UMD/hansen/global_forest_change_2025_v1_13",
+ "values": {
+  "plot_ha": 45.76,
+  "gfc2020_forest_ha": 0.0,
+  "gfc2020_forest_share": 0.0,
+  "hansen_tree_cover_ha": 0.49,
+  "hansen_tree_cover_share": 0.01
+ },
+ "note": "GFC2020 has no legal status and high errors for coffee, which looks like forest under shade trees. Hansen tree cover is from 2000 with later loss removed, so it is only a proxy for 2020."
+}

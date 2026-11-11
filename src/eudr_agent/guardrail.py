@@ -80,7 +80,7 @@ def _check_geometry(plot: PlotInput) -> tuple[list[str], list[str]]:
     blocked, warnings = [], []
     (lon_min, lon_max), (lat_min, lat_max) = KARNATAKA["lon"], KARNATAKA["lat"]
     if not all(lon_min <= lon <= lon_max and lat_min <= lat <= lat_max for lon, lat, *_ in _corners(geometry)):
-        blocked.append("the plot is outside Karnataka, which is the only region this agent covers")
+        blocked.append("the plot is outside Karnataka, the only region this screening covers")
 
     computed, stated = check.get("computed_area_ha"), plot.get("area_ha")
     if computed is not None and computed <= 0:
@@ -118,7 +118,7 @@ def _check_document(path: str) -> str | None:
     except ValueError as error:
         return str(error)
     if match := INJECTION.search(text):
-        return f"it contains text addressed to the agent ('{match.group(0)}'), not a land record"
+        return f"it contains instructions to the screening system ('{match.group(0)}'), not land-record content"
     return None
 
 

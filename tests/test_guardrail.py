@@ -30,9 +30,16 @@ def doc_dir():
     folder.rmdir()
 
 
-def test_all_test_plots_pass():
+OUTSIDE_KARNATAKA = {"T-01", "W-01"}  # Kerala control plots: the input check must stop them
+
+
+def test_all_test_plots_pass_except_the_out_of_region_controls():
     for plot_id, plot in load_plots().items():
-        assert guardrail.check_input(plot)["passed"], plot_id
+        check = guardrail.check_input(plot)
+        if plot_id in OUTSIDE_KARNATAKA:
+            assert not check["passed"] and any("outside Karnataka" in b for b in check["blocked"]), plot_id
+        else:
+            assert check["passed"], plot_id
 
 
 def test_plots_without_records_or_year_get_warnings_not_blocks():

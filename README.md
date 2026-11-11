@@ -84,6 +84,13 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 .venv/bin/streamlit run app/streamlit_app.py     # the evidence desk, at http://localhost:8501
 ```
 
+**Submitting a plot on the desk.** Choose *New submission*, then upload the boundary (.kml from Google Earth, or
+.geojson, one polygon), state the declared crop, crop-since year and (optionally) area, add land records (.pdf,
+.md, .txt), and click *Submit and run the check*. The case runs straight away. The input check stops plots
+outside Karnataka, non-coffee crops, broken shapes and tampered records before any agent sees them. Submissions
+are saved in `data/submissions/` (gitignored, may hold real grower data) and listed under *Submitted plots*.
+*Demo plots* are the labelled evaluation set. Your own reference for a plot is never sent to the agents.
+
 No API key needed: without `LLM_API_KEY` the rules agent runs offline (keyword grading,
 glossary query rewrite, extractive answers). Copy `.env.example` to `.env` and add a key
 to switch grading, rewriting and answering to the LLM.

@@ -1,0 +1,52 @@
+{
+ "tool": "ndvi_series",
+ "dataset": "COPERNICUS/S2_SR_HARMONIZED; GOOGLE/CLOUD_SCORE_PLUS/V1/S2_HARMONIZED; dry seasons 2019-2026",
+ "values": {
+  "season": "January to March",
+  "plot": {
+   "2019": {
+    "ndvi": 0.765,
+    "clear_share": 1
+   },
+   "2020": {
+    "ndvi": 0.773,
+    "clear_share": 1
+   },
+   "2021": {
+    "ndvi": 0.771,
+    "clear_share": 1
+   },
+   "2022": {
+    "ndvi": 0.772,
+    "clear_share": 1
+   },
+   "2023": {
+    "ndvi": 0.76,
+    "clear_share": 1
+   },
+   "2024": {
+    "ndvi": 0.771,
+    "clear_share": 1
+   },
+   "2025": {
+    "ndvi": 0.754,
+    "clear_share": 1
+   },
+   "2026": {
+    "ndvi": 0.741,
+    "clear_share": 1
+   }
+  },
+  "loss_pixels": {
+   "2019": 0.773,
+   "2020": 0.792,
+   "2021": 0.763,
+   "2022": 0.781,
+   "2023": 0.757,
+   "2024": 0.755,
+   "2025": 0.759,
+   "2026": 0.767
+  }
+ },
+ "note": "Median NDVI of clear Sentinel-2 pixels, January to March each year. Pruning dips and recovers within a year or two; clearing stays low. Shade coffee and forest have similar NDVI, so this cannot tell them apart."
+}

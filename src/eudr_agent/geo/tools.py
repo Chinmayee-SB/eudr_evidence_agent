@@ -70,6 +70,7 @@ def _ee() -> Any:
     if not settings.ee_project:
         raise RuntimeError("EE_PROJECT is not set in .env")
     ee.Initialize(project=settings.ee_project)
+    ee.data.setDeadline(int(settings.ee_timeout_s * 1000))  # a stuck query fails (an error finding), not hangs
     return ee
 
 

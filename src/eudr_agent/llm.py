@@ -14,7 +14,10 @@ from eudr_agent.config import settings
 @lru_cache(maxsize=1)
 def _client() -> OpenAI:
     # wrapped so every call is traced in LangSmith when it is switched on (observability.py)
-    return observability.wrap_llm_client(OpenAI(base_url=settings.llm_base_url or None, api_key=settings.llm_api_key))
+    # a hung call fails after llm_timeout_s and is retried llm_retries times, instead of the SDK's 10 minutes
+    # (one geo-analyst call on U-01 took 603 s)
+    return observability.wrap_llm_client(OpenAI(base_url=settings.llm_base_url or None, api_key=settings.llm_api_key,
+                                                timeout=settings.llm_timeout_s, max_retries=settings.llm_retries))
 
 
 def complete(messages: list[dict[str, Any]], tools: list[dict[str, Any]] | None = None,

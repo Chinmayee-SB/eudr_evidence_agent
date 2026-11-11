@@ -3,3 +3,6 @@ C-01,coffee,A,yes,no,not applicable,good,Clear,10/2017,1/2023,10,everything look
 C-02,coffee,A,yes,no,not applicable,good,Clear,4/2017,12/2024,10,No obvious new clearing; pond excluded
 K-01,coffee,A,yes,no,not applicable,good,Clear,12/2018,11/2024,10,No obvious new clearing; pond excluded
 N-01,control_protected_area,A,no,yes,in a block that looked like forest in 2017,good,High risk,9/2018,4/2024,10,Natural forest control plot; looks like clearing exists
+S-01,control_protected_area,A,yes,no,not applicable,good,Clear,01/2019,01/2025,10,No obvious new clearing
+W-01,control_rubber,A,yes,no,not applicable,good,Clear,01/2018,03/2022,10,No obvious new clearing
+T-01,control_tea,AI,yes,no,not applicable,good,Clear,1/2020,7/2026,30,"Control: tea estate (Kerala), not coffee. Tea hedges in 2020 and 2026, no clearing over 0.5 ha."

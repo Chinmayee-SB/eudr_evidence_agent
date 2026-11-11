@@ -1,0 +1,27 @@
+{
+ "tool": "boundary_sensitivity",
+ "dataset": "UMD/hansen/global_forest_change_2025_v1_13; projects/JRC/TMF/v1_2025/DeforestationYear; JRC/GFC2020/V4",
+ "values": {
+  "shift_m": 30,
+  "variants": {
+   "as_drawn": {
+    "plot_ha": 36.77,
+    "loss_ha": 0.0,
+    "gfc2020_forest_share": 0.99
+   },
+   "grown": {
+    "plot_ha": 47.35,
+    "loss_ha": 0.0,
+    "gfc2020_forest_share": 0.98
+   },
+   "shrunk": {
+    "plot_ha": 26.83,
+    "loss_ha": 0.0,
+    "gfc2020_forest_share": 1.0
+   }
+  },
+  "stable": true,
+  "changes": []
+ },
+ "note": "The boundary is moved 30 m out and 30 m in, because hand-drawn plot outlines are approximate. A result that flips is not reliable without a surveyed boundary."
+}

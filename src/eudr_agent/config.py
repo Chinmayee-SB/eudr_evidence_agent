@@ -29,10 +29,13 @@ class Settings:
     llm_api_key: str = os.getenv("LLM_API_KEY", "")
     llm_model: str = os.getenv("LLM_MODEL", "")
     llm_reasoning_effort: str = os.getenv("LLM_REASONING_EFFORT", "none")
+    llm_timeout_s: float = float(os.getenv("LLM_TIMEOUT_S", "60"))   # per attempt; the SDK default is 600 s
+    llm_retries: int = int(os.getenv("LLM_RETRIES", "2"))
     top_k: int = int(os.getenv("RAG_TOP_K", "5"))
     max_retries: int = int(os.getenv("RAG_MAX_RETRIES", "2"))
     retrieval: str = os.getenv("RAG_RETRIEVAL", "hybrid")  # hybrid, bm25 or vector
     ee_project: str = os.getenv("EE_PROJECT", "")
+    ee_timeout_s: float = float(os.getenv("EE_TIMEOUT_S", "120"))   # per Earth Engine request
 
     @property
     def llm_enabled(self) -> bool:

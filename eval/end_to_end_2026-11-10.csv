@@ -1,0 +1,8 @@
+plot_id,label,whisp,ours,rule,verdict_note,agreement,group,labeller,geo_rounds,send_backs,decisions,rule_questions,tools_run,llm_overruled,open_items,seconds,case_id
+C-01,clear,more_info_needed,clear,4,rule 4: No deforestation after 2020,agrees,coffee,A,2,1,4,3,forest_2020 loss_after_2020 protected_area_check read_document,0,0,46,C-01-20261110-125346-5f76ca
+C-02,clear,more_info_needed,clear,6,"rule 6: Small, stable loss on a coffee plot farmed before 2020",agrees,coffee,A,1,0,2,2,boundary_sensitivity coffee_probability forest_2020 locate_loss loss_after_2020 ndvi_series protected_area_check,0,1,46,C-02-20261110-125432-d75801
+K-01,clear,low,needs_evidence,7,rule 7: The evidence is not conclusive,asks for evidence,coffee,A,1,0,2,2,boundary_sensitivity forest_2020 locate_loss loss_after_2020 ndvi_series protected_area_check read_document,0,0,36,K-01-20261110-125518-209f0f
+N-01,high_risk,more_info_needed,high_risk,1,rule 1: Inside a protected area in force,agrees,control_protected_area,A,1,0,2,1,protected_area_check,0,2,14,N-01-20261110-125554-a422ce
+S-01,clear,,high_risk,1,rule 1: Inside a protected area in force,disagrees,control_protected_area,A,1,0,2,1,protected_area_check,0,2,15,S-01-20261110-125608-f72aa5
+T-01,clear,,,,,blocked by input check,control_tea,AI,0,0,0,0,,0,0,0,T-01-20261110-125623-1beba7
+W-01,clear,,,,,blocked by input check,control_rubber,A,0,0,0,0,,0,0,0,W-01-20261110-125623-796831

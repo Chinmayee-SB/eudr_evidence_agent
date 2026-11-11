@@ -1,0 +1,38 @@
+{
+ "tool": "locate_loss",
+ "dataset": "UMD/hansen/global_forest_change_2025_v1_13; projects/JRC/TMF/v1_2025/DeforestationYear; JRC/GFC2020/V4",
+ "values": {
+  "loss_ha": 1.38,
+  "patch_count": 3,
+  "largest_patch_ha": 1.14,
+  "pattern": "block",
+  "loss_at_edge_ha": 1.29,
+  "share_at_edge": 0.93,
+  "loss_in_gfc2020_forest_ha": 1.38,
+  "patches": [
+   {
+    "area_ha": 1.14,
+    "distance_to_edge_m": 4,
+    "first_year": 2021,
+    "last_year": 2024,
+    "gfc2020_forest_ha": 1.14
+   },
+   {
+    "area_ha": 0.15,
+    "distance_to_edge_m": 0,
+    "first_year": 2021,
+    "last_year": 2021,
+    "gfc2020_forest_ha": 0.15
+   },
+   {
+    "area_ha": 0.09,
+    "distance_to_edge_m": 71,
+    "first_year": 2024,
+    "last_year": 2024,
+    "gfc2020_forest_ha": 0.09
+   }
+  ],
+  "patches_not_listed": 0
+ },
+ "note": "Patches are joined 30 m loss pixels. Loss within 30 m of the edge may come from an imprecise boundary rather than the plot. Patch size is compared with the 0.5 ha in the EUDR forest definition."
+}

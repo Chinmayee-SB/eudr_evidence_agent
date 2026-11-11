@@ -126,7 +126,7 @@ def retrieve(state: RAGState) -> RAGState:
         rec["found_by"] = {h.chunk.ref: h.found_by for h in hits}
         if get_index().rerank_note:
             rec["rerank"] = get_index().rerank_note
-        rec["summary"] = f"query='{state['query'][:60]}' -> {[h.chunk.ref for h in hits[:3]]}"
+        rec["summary"] = f"query='{state['query']}' -> {[h.chunk.ref for h in hits[:3]]}"
     return {"hits": hits}
 
 
@@ -198,7 +198,7 @@ def rewrite(state: RAGState) -> RAGState:
             query = state["question"] + " " + " ".join(dict.fromkeys(extra))
         attempt = state.get("attempt", 0) + 1
         rec["attempt"] = attempt
-        rec["summary"] = f"attempt {attempt}: '{query[:70]}'"
+        rec["summary"] = f"attempt {attempt}: '{query}'"
     return {"query": query, "attempt": attempt}
 
 
@@ -307,7 +307,7 @@ def verify_answer(state: RAGState) -> RAGState:
 
 def no_rule(state: RAGState) -> RAGState:
     with state["tracer"].span("no_rule_found") as rec:
-        rec["summary"] = "abstain" + (f": {state['abstain_reason'][:80]}" if state.get("abstain_reason") else "")
+        rec["summary"] = "abstain" + (f": {state['abstain_reason']}" if state.get("abstain_reason") else "")
     answer = "No rule found in the indexed EUDR texts for this question."
     if state.get("abstain_reason"):
         answer = f"No answer given: {state['abstain_reason']}"

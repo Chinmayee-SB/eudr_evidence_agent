@@ -16,3 +16,7 @@ data/plots/documents/uploads/
 
 # rules-agent answer cache: keyed to the code and texts, so it is rebuilt on any change (see rag/cache.py)
 data/cache/rules/
+data/submissions/
+# hero photo is an unlicensed stock preview: kept local only (the landing page falls back to plain green without it)
+app/static/hero_coffee.jpg
+.vscode/

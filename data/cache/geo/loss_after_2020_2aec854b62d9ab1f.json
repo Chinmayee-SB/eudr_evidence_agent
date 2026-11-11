@@ -1,0 +1,16 @@
+{
+ "tool": "loss_after_2020",
+ "dataset": "UMD/hansen/global_forest_change_2025_v1_13; projects/JRC/TMF/v1_2025/DeforestationYear; projects/JRC/TMF/v1_2025/DegradationYear",
+ "values": {
+  "plot_ha": 5.69,
+  "hansen_loss_ha": 0,
+  "hansen_loss_by_year": {},
+  "tmf_deforestation_ha": 0,
+  "tmf_deforestation_by_year": {},
+  "tmf_degradation_ha": 0.52,
+  "tmf_degradation_by_year": {
+   "2025": 0.52
+  }
+ },
+ "note": "Hansen loss is any canopy loss, not proof of deforestation. TMF degradation is not the same as EUDR forest degradation. Neither dataset can tell pruning from clearing."
+}

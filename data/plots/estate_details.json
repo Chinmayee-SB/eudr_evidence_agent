@@ -1,5 +1,5 @@
 {
- "_note": "MOCKED sample estate details, written by the team for testing. Not real grower data.",
+ "_note": "MOCKED sample estate details, written by the team for testing. Not real grower data. Every plot, including the non-coffee controls, declares coffee: the agent must check the claim.",
  "C-01": {
   "declared_crop": "coffee",
   "crop_since": 2005,
@@ -20,6 +20,18 @@
   ]
  },
  "N-01": {
+  "declared_crop": "coffee",
+  "documents": []
+ },
+ "S-01": {
+  "declared_crop": "coffee",
+  "documents": []
+ },
+ "W-01": {
+  "declared_crop": "coffee",
+  "documents": []
+ },
+ "T-01": {
   "declared_crop": "coffee",
   "documents": []
  }

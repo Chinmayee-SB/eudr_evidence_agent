@@ -1,0 +1,10 @@
+{
+ "tool": "protected_area_check",
+ "dataset": "WCMC/WDPA/current/polygons",
+ "values": {
+  "inside_protected_area": false,
+  "in_force": [],
+  "proposed": []
+ },
+ "note": "Some boundaries are coarse. Proposed areas are listed but are not legally in effect."
+}

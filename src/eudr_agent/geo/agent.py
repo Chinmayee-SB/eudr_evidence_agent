@@ -142,13 +142,13 @@ def act(state: GeoState) -> GeoState:
                 content = {"note": "This check already ran on this plot; its result is repeated here. "
                                    "Do not call it again.", "result": earlier}
                 rec.update(tool=name, reason=args.get("reason", ""), repeat=True)
-                rec["summary"] = f"{name} [repeat, not re-run]  why: {args.get('reason', '')[:80]}"
+                rec["summary"] = f"{name} [repeat, not re-run]  why: {args.get('reason', '')}"
             else:
                 content = _run_tool(state["plot"], name, args)
                 findings.append(content)
                 rec.update(tool=name, reason=args.get("reason", ""), finding=content)
                 result = content.get("error") or ("from cache" if content.get("cached") else "ok")
-                rec["summary"] = f"{name} [{result}]  why: {args.get('reason', '')[:90]}"
+                rec["summary"] = f"{name} [{result}]  why: {args.get('reason', '')}"
         messages.append({"role": "tool", "tool_call_id": call["id"], "content": json.dumps(content)})
     return {"messages": messages, "findings": findings, "steps": state["steps"] + 1}
 

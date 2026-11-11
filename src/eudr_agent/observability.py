@@ -74,8 +74,10 @@ def log_officer_decision(run_id: str | None, officer: dict[str, Any]) -> None:
         from langsmith import Client
 
         decision = officer.get("decision", "")
-        Client().create_feedback(
-            run_id, key="officer_decision", value=decision,
+        client = Client()
+        traced_project = client.read_project(project_name=project())  # feedback must name the run's project
+        client.create_feedback(
+            run_id, key="officer_decision", value=decision, project_id=traced_project.id,
             score={"approve": 1, "override": 0}.get(decision),  # documents_added is neither
             comment=(officer.get("reason") or "") + (f" (verdict set to {officer['verdict']})" if officer.get("verdict") else ""))
     except Exception:  # an unreachable LangSmith must not stop the officer

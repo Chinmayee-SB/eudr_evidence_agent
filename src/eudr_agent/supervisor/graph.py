@@ -86,7 +86,7 @@ def supervisor_node(case: CaseFile) -> CaseFile:
         decision = decide(case, review)
         rec.update(gaps=[g["question"] for g in review["gaps"]], conflicts=[c["text"] for c in review["conflicts"]],
                    not_checkable=review["not_checkable"], decision=decision)
-        rec["summary"] = f"{decision['action']} [{decision['source']}]: {decision['reason'][:110]}"
+        rec["summary"] = f"{decision['action']} [{decision['source']}]: {decision['reason']}"
     update: CaseFile = {"review": review, "decisions": [*case.get("decisions", []), decision],
                         "steps": case.get("steps", 0) + 1}
     if decision["action"] == "send_back":
