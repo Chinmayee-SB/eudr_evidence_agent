@@ -5,62 +5,100 @@ The agent answers one question for a coffee exporter's compliance officer:
 It combines satellite checks with the EU Deforestation Regulation (EUDR) text and returns
 Clear / Needs evidence / High risk with an evidence file. A person approves every verdict.
 
-## Status (9 Nov 2026)
+## Status (12 Nov 2026)
+
+Everything in the plan is built and working (195 tests pass). The officer's desk is called **Canopy Check**.
 
 | Part | Status |
 |---|---|
 | Input guardrail | **Working** (`guardrail.py`): blocks, drops or warns before any agent runs |
 | Geo-analyst agent + satellite tools | **Working**: 8 tools and a ReAct loop that picks only the checks a plot needs; Whisp runs as a separate baseline |
 | Supervisor | **Working**: review, routing, budgets, officer pause, saved cases (SQLite or Postgres) |
-| Rules agent: agentic RAG over the EUDR, Commission guidance and Karnataka law | **Working**: legal-citation rule, claim checks, reranker; faithfulness 0.99 on 37 questions |
+| Rules agent: agentic RAG over the EUDR, Commission guidance and Karnataka law | **Working**: legal-citation rule, claim checks, reranker; faithfulness 1.00 on 37 questions |
 | Verdict rules | **Working** (`supervisor/verdict_rules.py`): 7 fixed rules, each verdict with its reasons, legal basis and caveats |
-| Evidence desk | **Working**: runs the full case, shows each step live, a card for every tool (NDVI chart, boundary variants), budgets used, rule answers with their checks, officer approves / overrides / adds documents, saved cases, PDF pack with the verdict, System view with the evaluations |
+| Canopy Check desk | **Working**: landing page; *New submission* (upload a KML/GeoJSON boundary and land records), *Submitted plots*, *Demo plots*; each step shown live, a card for every tool, legal answers with their checks, officer approves / overrides / re-checks with new records (once), PDF evidence pack, *How it works* view with the evaluations. Plain wording throughout (`wording.py`) |
+| Reliability | **Working**: timeouts and retries on LLM and Earth Engine calls; one case per plot, with at most one re-check |
 | Tracing | **Working**: local JSONL per case, and LangSmith when its key is set (`observability.py`) |
 
-**End to end** (`eval/run_end_to_end.py`, 9 Nov 2026, real agents, draft verdicts):
+**End to end** (`eval/run_end_to_end.py`, 10 Nov 2026, real agents, draft verdicts, the 7 demo plots):
 
-| Plot | Human label | FAO Whisp | Ours | Deciding rule |
-|---|---|---|---|---|
-| C-01 | Clear | more info needed | **Clear** | 4: no deforestation after 2020 |
-| C-02 | Clear | more info needed | **Clear** | 6: small, stable loss on coffee farmed before 2020 (caveat: no land record) |
-| K-01 | Clear | low | **Needs evidence** | 7: 82% of the loss disappears when the boundary moves 30 m in |
-| N-01 | High risk | more info needed | **High risk** | 1: inside Hatgat Reserve Forest |
+| Plot | Kind | Label | FAO Whisp | Ours | Deciding rule |
+|---|---|---|---|---|---|
+| C-01 | coffee | Clear | more info needed | **Clear** | 4: no deforestation after 2020 |
+| C-02 | coffee | Clear | more info needed | **Clear** | 6: small, stable loss on coffee farmed before 2020 |
+| K-01 | coffee | Clear | low | **Needs evidence** | 7: most of the loss disappears when the boundary moves 30 m |
+| N-01 | protected forest | High risk | more info needed | **High risk** | 1: inside a reserve forest in force |
+| S-01 | protected forest | Clear (imagery only) | not run | **High risk** | 1: inside a protected area in force |
+| T-01 | tea, Kerala | Clear | not run | **Stopped** | input check: not coffee, outside Karnataka |
+| W-01 | rubber | Clear | not run | **Stopped** | input check: not coffee |
 
-3 of 4 agree with the label, and the 4th asks for evidence rather than disagreeing. Ours catches the
-protected-area plot; Whisp does not, because its risk score ignores protected areas. 4 plots is too few to
-claim accuracy: this shows the system works end to end and where it is cautious.
+- C-01, C-02 and N-01 agree with the label. K-01 asks for evidence rather than disagreeing.
+- S-01's labeller judged the imagery only ("no obvious new clearing"). The plot is inside a protected area in force, which is high risk under Art. 3(b) and 2(40) whatever the imagery shows, so the expected answer in `data/plots/README.md` is High risk.
+- Ours catches both protected-area plots. Whisp does not, because its risk score ignores protected areas.
+- 7 plots are too few to claim accuracy. This shows the system works end to end and where it is cautious.
+
+**Plots submitted on the desk** (16 more plots, kept outside the repo in `../data/`; three run on 10 Nov 2026):
+
+| Plot | Label | Ours | Why |
+|---|---|---|---|
+| K-05 | Clear (AI labeller) | **Clear** (rule 4) | no loss on either dataset |
+| K-03 | Clear | **Needs evidence** (rule 7) | Hansen 0 ha, TMF 1.43 ha: the datasets disagree |
+| C-05 | Needs evidence (AI labeller) | **Clear** (rule 4) | no loss on either dataset |
+
+The AI labeller's reading of the imagery is a second opinion, not ground truth.
+
+## Known limits
+
+- **Coffee map** (`coffee_probability`, Forest Data Partnership): it scored about 0 on every shade-coffee plot tested (C-01, C-02, K-03). It stays as a tool, but the desk marks it "not reliable for shade-grown coffee in India" and **no verdict rule uses it**.
+- **Loss datasets cannot tell pruning from clearing.** Where Hansen and TMF disagree, the verdict is Needs evidence and the officer decides (a field visit or recent imagery).
+- **Proposed protected areas** are shown on the evidence card but do not change the verdict, since they are not legally in force.
+- **Land records are mocked**, and the crop-since years of the test plots are mocked. The input check screens documents for obvious prompt injection only.
+- **Hand-drawn boundaries are approximate**, so loss within 30 m of the edge is flagged and the boundary is moved 30 m in and out.
+- **The hero photo** (`app/static/hero_coffee.jpg`) is a stock preview, for the demo only.
 
 ## Layout
 
 ```
+app/streamlit_app.py   the Canopy Check desk: landing page, submissions, case view, officer sign-off, PDF
+app/static/            landing page photo
 src/eudr_agent/
   config.py        settings from .env
-  tracing.py       per-step JSONL traces (runs/traces/), stand-in for Langfuse
-  llm.py           any OpenAI-compatible model (Groq, Gemini, Ollama ...)
+  llm.py           any OpenAI-compatible model, with timeouts and retries
+  tracing.py       per-step JSONL traces (runs/traces/)
+  observability.py LangSmith tracing, when its key is set
   state.py         the plot's case file shared by all agents
-  plots.py         loads a test plot as the agent's input
+  plots.py         loads a demo plot as the agent's input
+  submissions.py   saves a plot submitted on the desk (KML or GeoJSON) as SB-001, SB-002 ...
+  documents.py     reads uploaded land records (PDF, MD, TXT)
+  guardrail.py     input check before any agent runs
+  wording.py       plain words for the desk and the PDF (no internal terms)
+  report.py        the PDF evidence pack
   rag/             rules agent
     fetch.py       downloads the EUDR texts from the EU Publications Office
     chunk.py       splits them into citable chunks (Art. 2(4), Art. 38(2), Recital 46 ...)
+    pdf_split.py   splits the guidance, FAQ and Karnataka Forest Act PDFs
     index.py       BM25 + vector search, merged with Reciprocal Rank Fusion
     vector.py      local Chroma vector index (no account needed)
-    agent.py       LangGraph loop: retrieve -> grade -> rewrite/retry -> answer -> check citations
+    rerank.py      cross-encoder reranker (bge-reranker-base)
+    agent.py       LangGraph loop: retrieve -> grade -> rewrite/retry -> answer -> check citations -> verify
+    verify.py      quote check and claim check against the passages
+    cache.py       verified-answer cache
     prompts.py
   geo/agent.py     geo-analyst: ReAct loop that picks tools one at a time
   geo/tools.py     satellite and document tools: protected areas, forest 2020, loss after 2020, loss location,
                    boundary shift, Sentinel-2 NDVI, coffee model (WDPA, GFC2020, Hansen, TMF, S2, FDP)
-  guardrail.py     input check before any agent runs
   supervisor/
     graph.py       guardrail -> geo-analyst <-> supervisor <-> rules agent -> verdict -> officer pause -> pack
     review.py      code review of the evidence: gaps, conflicts, checks not yet possible
     decide.py      the LLM proposes the next step; code enforces budgets and required evidence
     checkpoints.py saved cases: SQLite by default, Postgres if DATABASE_URL is set
     verdict_rules.py  fixed verdict table: 7 rules, first match decides
-data/corpus/notes/ dataset limitation notes the agent can cite
-data/corpus/manual/  drop the Commission guidance + FAQ PDFs here
-data/plots/        4 anonymised test plots, mocked estate details and land records, manual labels
-eval/              rule questions, RAG metrics, end-to-end run, Whisp baseline, saved results
-scripts/           build_index.py, ask.py
+data/corpus/notes/   dataset limitation notes the agent can cite
+data/corpus/manual/  Commission guidance, FAQ and Karnataka Forest Act PDFs
+data/plots/          7 anonymised demo plots, mocked estate details and land records, labels
+data/cache/geo/      saved satellite results, so the demo runs without Earth Engine
+eval/                rule questions, RAG metrics, end-to-end run, Whisp baseline, saved results
+scripts/             build_index.py, ask.py, run_case.py ...
 tests/
 ```
 
@@ -81,7 +119,7 @@ uv pip install --python .venv/bin/python -e ".[dev]"
 .venv/bin/python eval/run_rag_quality.py --answers  # RAG metrics: recall@k, MRR, nDCG, faithfulness ...
 .venv/bin/python eval/run_end_to_end.py          # the full case on every plot, vs the labels and Whisp
 .venv/bin/python -m pytest
-.venv/bin/streamlit run app/streamlit_app.py     # the evidence desk, at http://localhost:8501
+.venv/bin/streamlit run app/streamlit_app.py     # the Canopy Check desk, at http://localhost:8501
 ```
 
 **Submitting a plot on the desk.** Choose *New submission*, then upload the boundary (.kml from Google Earth, or
